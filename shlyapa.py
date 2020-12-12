@@ -39,8 +39,6 @@ with m as source:
     r.adjust_for_ambient_noise(source)
 
 
-
-
 def speak(what):
     engine = pyttsx3.init()
     engine.say(what)
