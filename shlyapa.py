@@ -1,3 +1,5 @@
+from Demos.EvtSubscribe_pull import w
+
 import functions
 import os
 import speech_recognition as sr
@@ -10,6 +12,9 @@ import pathlib
 import requests
 from bs4 import BeautifulSoup
 import vk_api
+from pyowm import OWM
+from pyowm.utils import config
+from pyowm.utils import timestamps
 
 opts = {
     'names': ('шляпа', 'шляпы', 'шляпу'),
@@ -24,7 +29,12 @@ opts = {
         'send': ('отправь', 'dsadasdasdsa'),
         'note': ('напомни', 'напомни мне'),
         'note1': ('мои планы', 'что у меня запланировано'),
-        'off': ('dasdasd', 'выключи компьютер')
+        'off': ('dasdasd', 'выключи компьютер'),
+        'temp': ('dasdahs', 'какая сейчас температура'),
+        'sky': ('dasdas', 'какие сейчас осадки'),
+        'wind_speed': ('dasdasd', 'какая сейчас ветeр'),
+        'if_rain': ('dasdsad', 'сейчас есть дождь'),
+        'humidity': ('dasdja', 'какое сейчас давление')
     }
 }
 vk_names = {'dasd': 879796568, 'мамe': 2139749, 'роме': 617562550, 'мне': 370300823, 'духи': 310799106,
@@ -79,6 +89,7 @@ note_time = functions.note()
 time_now = '{}:{}'.format(datetime.datetime.now().hour, datetime.datetime.now().minute)
 
 dollar_eur = 'https://www.cbr.ru/'
+weather = 'https://www.gismeteo.ru/weather-sankt-peterburg-4079/now/'
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
@@ -87,6 +98,8 @@ headers = {
 course_page = requests.get(dollar_eur, headers=headers)
 soup = BeautifulSoup(course_page.content, 'html.parser')
 convert = soup.find_all('div', {'class': 'col-md-2 col-xs-9 _right mono-num'})
+weather_for = soup.find_all('div', {'class': 'date xs fadeIn data-tz'})
+pass
 
 
 def execute_cmd(cmd, voice):
@@ -130,6 +143,16 @@ def execute_cmd(cmd, voice):
         functions.note()
     if cmd == 'off':
         os.system("shutdown /p")
+    if cmd == 'temp':
+        print(functions.get_weather()['temp'])
+    if cmd == 'sky':
+        print('w.detailed_status')
+    if cmd == 'wind':
+        print(w.wind())
+    if cmd == 'if_rain':
+        print(w.rain)
+    if cmd == 'humidity':
+        print(w.humidity)
 
 
 stop_listening = r.listen_in_background(m, callback)
