@@ -38,8 +38,7 @@ m = sr.Microphone(device_index=0)
 with m as source:
     r.adjust_for_ambient_noise(source)
 
-with open('vk_token.txt') as file:
-    token = file.read()
+
 
 
 def speak(what):

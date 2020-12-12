@@ -1,7 +1,7 @@
 import datetime
 import token
-
 import vk_api
+
 def note():
     with open('notes.txt', 'r') as file:
         try:
@@ -28,6 +28,8 @@ def note():
         except UnboundLocalError:
             pass
 
+with open('vk_token.txt') as file:
+    token = file.read()
 
 def sent(user_id, messagee):
     vk = vk_api.VkApi(token=token).get_api()
