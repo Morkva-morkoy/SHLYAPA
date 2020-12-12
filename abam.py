@@ -98,15 +98,15 @@ with open('notes.txt', 'r') as file:
       print(f'У вас осталось {time_diff // 60} часов {time_diff % 60} минут до того, чтобы {text_for_print}')
     else:
       print('Вы прошляпили свой план')
-    # if hour_note > hour_now:
-    #   if minute_now > minute_note:
-    #     f = (hour_note - hour_now) * 60
-    #     v = f + minute_note - minute_now
-    #     print('У вас осталось ' + str(v // 60) + ' часов ' + str(v % 60) + ' минут'+ ' до того чтобы ' + text_for_print)
-    #   else:
-    #     print('У вас осталось ' + str(hour_note - hour_now) + ' часов ' +str(minute_note - minute_now) + ' минут'+ ' до того чтобы ' + text_for_print)
-    # else:
-    #   print('Вы прошляпили свой план')
+    if hour_note > hour_now:
+      if minute_now > minute_note:
+        f = (hour_note - hour_now) * 60
+        v = f + minute_note - minute_now
+        print('У вас осталось ' + str(v // 60) + ' часов ' + str(v % 60) + ' минут'+ ' до того чтобы ' + text_for_print)
+      else:
+        print('У вас осталось ' + str(hour_note - hour_now) + ' часов ' +str(minute_note - minute_now) + ' минут'+ ' до того чтобы ' + text_for_print)
+    else:
+      print('Вы прошляпили свой план')
   except IndexError:
     pass
   except ValueError:
@@ -160,7 +160,7 @@ def execute_cmd(cmd, voice):
  
 
 
-
+print('bruh')
 stop_listening = r.listen_in_background(m, callback)
 while True:
   time.sleep(0.1)
