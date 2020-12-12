@@ -14,39 +14,34 @@ opts = {
     'names': ('шляпа', 'шляпы', 'шляпу'),
     'tbr': ('сколько', 'какое'),
     'cmds': {
-        'cdate': ('сегодня число', 'число'),
         'ctime': ('сейчас времени', 'сейчас время', 'время', 'времени'),
+        'cdate': ('сегодня число', 'число'),
         'web_search': ('найди', 'найти'),
-        'sublime': ('запусти', 'открой'),
-        'doll_course': ('курс доллара', 'курс'),
-        'eur_course': ('курс евро', 'dsad'),
-        'v-bucks': ('курс'),
-        'pesnya': ('подрубай', 'adadadsad'),
-        'corona': ('случаев коронавируса'),
+        'course_usd': ('курс доллара', 'доллар в рублях'),
+        'course_eur': ('курс евро', 'евро в рублях'),
+        'apps': ('открой', 'asdasdasd'),
         'send': ('отправь', 'dsadasdasdsa'),
-        'note': ('напомни мне', 'dasdsadsa')
+        'note': ('напомни', 'напомни мне'),
+        'note1': ('мои планы', 'что у меня запланировано'),
+        'off': ('dasdasd', 'выключи компьютер')
     }
 }
-
-names = {'dasd': 879796568, 'мамe': 2139749, 'роме': 617562550, 'мне': 370300823, 'духи': 310799106, 'витя': 429372253,
-         'вове': 97233590}
-
+vk_names = {'dasd': 879796568, 'мамe': 2139749, 'роме': 617562550, 'мне': 370300823, 'духи': 310799106,
+            'витя': 429372253, 'вове': 97233590, 'королю': 332716512}
 list_months = ['bruh', 'январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь',
                'ноябрь', 'декабрь']
 r = sr.Recognizer()
 m = sr.Microphone(device_index=0)
 
-with open('vk_token.txt') as file:
-    token = file.read()
-
 with m as source:
     r.adjust_for_ambient_noise(source)
+
+with open('vk_token.txt') as file:
+    token = file.read()
 
 
 def speak(what):
     engine = pyttsx3.init()
-    voices = engine.getProperty('voices')
-    engine.setProperty('voice', voices[1].id)
     engine.say(what)
     engine.runAndWait()
 
@@ -77,47 +72,49 @@ def recognize_cmd(cmd):
     return RC
 
 
-DOLLAR_RUB = 'https://www.cbr.ru/'
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36'}
-full_page = requests.get(DOLLAR_RUB, headers=headers)
-soup = BeautifulSoup(full_page.content, 'html.parser')
-convert = soup.find_all('div', {'class': 'col-md-2 col-xs-9 _right mono-num'})
-with open('notes.txt', 'r') as file:
-    try:
-        text_for_print = file.read()
-        text = text_for_print.split()
-        lent = len(text)
-        time_for_note = text[lent - 1].replace(':', ' ').split()
-        hour_note = int(time_for_note[0])
-        minute_note = int(time_for_note[1])
-        hour_now = datetime.datetime.now().hour
-        minute_now = datetime.datetime.now().minute
-
-        minute_now += hour_now * 60
-        minute_note += hour_note * 60
-
-        time_diff = minute_note - minute_now
-
-        if time_diff >= 0:
-            print(f'У вас осталось {time_diff // 60} часов {time_diff % 60} минут до того, чтобы {text_for_print}')
-        else:
-            print('Вы прошляпили свой план')
-        if hour_note > hour_now:
-            if minute_now > minute_note:
-                f = (hour_note - hour_now) * 60
-                v = f + minute_note - minute_now
-                print('У вас осталось ' + str(v // 60) + ' часов ' + str(
-                    v % 60) + ' минут' + ' до того чтобы ' + text_for_print)
+def note():
+    with open('notes.txt', 'r') as file:
+        try:
+            text_for_print = file.read()
+            text = text_for_print.split()
+            lent = len(text)
+            time_for_note = text[lent - 1].replace(':', ' ').split()
+            hour_note = int(time_for_note[0])
+            minute_note = int(time_for_note[1])
+            hour_now = datetime.datetime.now().hour
+            minute_now = datetime.datetime.now().minute
+            minute_now += hour_now * 60
+            minute_note += hour_note * 60
+            time_diff = minute_note - minute_now
+            note_time = ':'.join(time_for_note)
+            if time_diff >= 0:
+                print(f'У вас осталось {time_diff // 60} часов {time_diff % 60} минут до того, чтобы {text_for_print}')
             else:
-                print('У вас осталось ' + str(hour_note - hour_now) + ' часов ' + str(
-                    minute_note - minute_now) + ' минут' + ' до того чтобы ' + text_for_print)
-        else:
-            print('Вы прошляпили свой план')
-    except IndexError:
-        pass
-    except ValueError:
-        pass
+                print('Вы прошляпили свой план')
+        except IndexError:
+            pass
+        except ValueError:
+            pass
+        except UnboundLocalError:
+            pass
+
+
+with open('notes.txt', 'r') as file:
+    text_for_print = file.read()
+
+note_time = note()
+
+time_now = '{}:{}'.format(datetime.datetime.now().hour, datetime.datetime.now().minute)
+
+dollar_eur = 'https://www.cbr.ru/'
+
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                  'Chrome/87.0.4280.66 Safari/537.36'}
+
+course_page = requests.get(dollar_eur, headers=headers)
+soup = BeautifulSoup(course_page.content, 'html.parser')
+convert = soup.find_all('div', {'class': 'col-md-2 col-xs-9 _right mono-num'})
 
 
 def sent(user_id, messagee):
@@ -133,44 +130,46 @@ def execute_cmd(cmd, voice):
     now = datetime.datetime.now()
     if cmd == 'cdate':
         speak(str('Сейчас' + str(now.day) + ',' + list_months[now.month]))
-    elif cmd == 'ctime':
+    if cmd == 'ctime':
         speak('Сейчас' + str(now.hour) + ':' + str(now.minute))
-    elif cmd == 'web_search':
-        webbrowser.open_new_tab(
-            'https://www.google.com/search?q={}'.format('+'.join(str(voice).replace('шляпа найди', '').split())))
-    elif cmd == 'sublime':
-        voice_for_apps = voice.split()
-        voice_for_apps = voice_for_apps[2:]
-        voice_for_apps = ' '.join(voice_for_apps)
-        os.startfile(('C:\\Users\\SHLYAPA\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\{}').format(
-            voice_for_apps))
-    elif cmd == 'doll_course':
-        speak(convert[0].text + ' рубля')
-    elif cmd == 'eur_course':
-        speak(convert[2].text + ' рубля')
-    elif cmd == 'send':
+    if cmd == 'web_search':
+        webbrowser.open_new_tab('https://www.google.com/search?q={}'.format(' '.join(voice.split()[2:])))
+    if cmd == 'course_usd':
+        speak('{} рублей'.format(convert[0].text))
+    if cmd == 'course_eur':
+        speak('{} рублей'.format(convert[2].text))
+    if cmd == 'apps':
+        try:
+            voice_for_apps = voice.split()
+            voice_for_apps = voice_for_apps[2:]
+            voice_for_apps = ' '.join(voice_for_apps)
+            os.startfile('C:\\Users\\SHLYAPA\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\{}'.format(
+                voice_for_apps))
+        except Exception:
+            pass
+    if cmd == 'send':
         try:
             voice_for_vk = voice.split()
             voice_for_id = voice_for_vk[2]
-            voice_for_id = names[voice_for_id]
+            voice_for_id = vk_names[voice_for_id]
             voice_for_message = voice_for_vk[3:]
             voice_for_message = ' '.join(voice_for_message)
             sent(voice_for_id, voice_for_message)
         except Exception:
             pass
-    elif cmd == 'pesnya':
-        webbrowser.open_new_tab('https://www.youtube.com/watch?v=KReAKK9SUbQ')
-    elif cmd == 'note':
+    if cmd == 'note':
         voice = voice.split()
-        lent = len(voice)
         voice_for_note = voice[3:]
         voice_for_note = ' '.join(voice_for_note)
-        voice_for_time = voice[lent - 1]
         with open('notes.txt', 'w') as file:
             file.writelines(voice_for_note)
+    if cmd == 'note1':
+        note()
+    if cmd == 'off':
+        os.system("shutdown /p")
 
 
-print('bruh')
 stop_listening = r.listen_in_background(m, callback)
+
 while True:
     time.sleep(0.1)
