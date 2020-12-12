@@ -1,5 +1,3 @@
-from Demos.EvtSubscribe_pull import w
-
 import functions
 import os
 import speech_recognition as sr
@@ -148,11 +146,11 @@ def execute_cmd(cmd, voice):
     if cmd == 'sky':
         print('w.detailed_status')
     if cmd == 'wind':
-        print(w.wind())
+        print(functions.get_weather1().wind())
     if cmd == 'if_rain':
-        print(w.rain)
+        print(functions.get_weather1().rain)
     if cmd == 'humidity':
-        print(w.humidity)
+        print(functions.get_weather1().humidity)
 
 
 stop_listening = r.listen_in_background(m, callback)
