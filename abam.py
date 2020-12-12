@@ -1,3 +1,4 @@
+import functions
 import os
 import speech_recognition as sr
 import datetime
@@ -30,6 +31,7 @@ vk_names = {'dasd': 879796568, 'мамe': 2139749, 'роме': 617562550, 'мн�
             'витя': 429372253, 'вове': 97233590, 'королю': 332716512}
 list_months = ['bruh', 'январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь',
                'ноябрь', 'декабрь']
+
 r = sr.Recognizer()
 m = sr.Microphone(device_index=0)
 
@@ -72,37 +74,10 @@ def recognize_cmd(cmd):
     return RC
 
 
-def note():
-    with open('notes.txt', 'r') as file:
-        try:
-            text_for_print = file.read()
-            text = text_for_print.split()
-            lent = len(text)
-            time_for_note = text[lent - 1].replace(':', ' ').split()
-            hour_note = int(time_for_note[0])
-            minute_note = int(time_for_note[1])
-            hour_now = datetime.datetime.now().hour
-            minute_now = datetime.datetime.now().minute
-            minute_now += hour_now * 60
-            minute_note += hour_note * 60
-            time_diff = minute_note - minute_now
-            note_time = ':'.join(time_for_note)
-            if time_diff >= 0:
-                print(f'У вас осталось {time_diff // 60} часов {time_diff % 60} минут до того, чтобы {text_for_print}')
-            else:
-                print('Вы прошляпили свой план')
-        except IndexError:
-            pass
-        except ValueError:
-            pass
-        except UnboundLocalError:
-            pass
-
-
 with open('notes.txt', 'r') as file:
     text_for_print = file.read()
 
-note_time = note()
+note_time = functions.note()
 
 time_now = '{}:{}'.format(datetime.datetime.now().hour, datetime.datetime.now().minute)
 
@@ -115,15 +90,6 @@ headers = {
 course_page = requests.get(dollar_eur, headers=headers)
 soup = BeautifulSoup(course_page.content, 'html.parser')
 convert = soup.find_all('div', {'class': 'col-md-2 col-xs-9 _right mono-num'})
-
-
-def sent(user_id, messagee):
-    vk = vk_api.VkApi(token=token).get_api()
-    vk.messages.send(
-        user_id=user_id,
-        message=messagee,
-        random_id=0
-    )
 
 
 def execute_cmd(cmd, voice):
@@ -154,7 +120,7 @@ def execute_cmd(cmd, voice):
             voice_for_id = vk_names[voice_for_id]
             voice_for_message = voice_for_vk[3:]
             voice_for_message = ' '.join(voice_for_message)
-            sent(voice_for_id, voice_for_message)
+            functions.sent(voice_for_id, voice_for_message)
         except Exception:
             pass
     if cmd == 'note':
@@ -164,7 +130,7 @@ def execute_cmd(cmd, voice):
         with open('notes.txt', 'w') as file:
             file.writelines(voice_for_note)
     if cmd == 'note1':
-        note()
+        functions.note()
     if cmd == 'off':
         os.system("shutdown /p")
 
