@@ -99,7 +99,6 @@ soup = BeautifulSoup(course_page.content, 'html.parser')
 convert = soup.find_all('div', {'class': 'col-md-2 col-xs-9 _right mono-num'})
 
 
-
 def execute_cmd(cmd, voice):
     now = datetime.datetime.now()
     if cmd == 'cdate':
