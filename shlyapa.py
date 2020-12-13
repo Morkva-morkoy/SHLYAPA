@@ -97,7 +97,7 @@ headers = {
 course_page = requests.get(dollar_eur, headers=headers)
 soup = BeautifulSoup(course_page.content, 'html.parser')
 convert = soup.find_all('div', {'class': 'col-md-2 col-xs-9 _right mono-num'})
-pass
+
 
 
 def execute_cmd(cmd, voice):
