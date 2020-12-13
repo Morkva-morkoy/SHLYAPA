@@ -4,19 +4,6 @@
 ОПИСАНИЕ ПРОЕКТА:
 Представляем вам наш проект по разработке голосового ассистента. В нём мы хотим сделать многофункционального ассистента который сможет упростить вам жизнь
 
-БИБЛИОТЕКИ:
-import os
-import speech_recognition as sr
-import datetime
-import pyttsx3
-import time
-from fuzzywuzzy import fuzz
-import webbrowser
-import pathlib
-import requests
-from bs4 import BeautifulSoup
-import vk_api
-
 Неделя 1:
  Текущий функционал:
   1. Время
