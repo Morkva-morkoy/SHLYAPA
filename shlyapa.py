@@ -33,7 +33,7 @@ opts = {
         'sky': ('dasdas', 'какие сейчас осадки'),
         'wind_speed': ('dasdasd', 'какая сейчас ветeр'),
         'if_rain': ('dasdsad', 'сейчас есть дождь'),
-        'humidity': ('dasdja', 'какое сейчас давление'),
+        'humidity': ('dasdja', 'какоая сейчас влажность'),
         'corona': ('dasdasd', 'случаев короновируса')
     }
 }
@@ -42,8 +42,10 @@ vk_names = {'dasd': 879796568, 'роме': 617562550, 'мне': 370300823, 'ду
 list_months = ['bruh', 'январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь',
                'ноябрь', 'декабрь']
 
-counties = {'россии': 'Russia', 'украине': 'Ukraine', 'америке': 'US', 'индии': 'India', 'бразилии': 'Brazil', 'франции': 'France', 'великобритании': 'United Kingdom'}
+counties = {'россии': 'Russia', 'украине': 'Ukraine', 'америке': 'US', 'индии': 'India', 'бразилии': 'Brazil',
+            'франции': 'France', 'великобритании': 'United Kingdom'}
 
+cities = {'санкт-петербурге': 'Saint Petersburg, RU', 'москве': 'Moscow, RU'}
 
 r = sr.Recognizer()
 m = sr.Microphone(device_index=0)
@@ -65,7 +67,7 @@ def callback(recognizer, audio):
         if voice.startswith(opts['names']):
             cmd = voice
             cmd = recognize_cmd(cmd)
-            execute_cmd(cmd['cmd'], voice, counties)
+            execute_cmd(cmd['cmd'], voice, counties, cities)
 
     except sr.UnknownValueError:
         print('[log] Голос не распознан')
@@ -102,7 +104,7 @@ soup = BeautifulSoup(course_page.content, 'html.parser')
 convert = soup.find_all('div', {'class': 'col-md-2 col-xs-9 _right mono-num'})
 
 
-def execute_cmd(cmd, voice, countries):
+def execute_cmd(cmd, voice, countries, cities):
     now = datetime.datetime.now()
     if cmd == 'cdate':
         speak(str('Сейчас' + str(now.day) + ',' + list_months[now.month]))
@@ -144,15 +146,30 @@ def execute_cmd(cmd, voice, countries):
     if cmd == 'off':
         os.system("shutdown /p")
     if cmd == 'temp':
-        print(functions.get_weather().temperature('celsius')['temp'])
+        try:
+            print(functions.get_weather(cities[voice.split()[-1]]).temperature('celsius')['temp'])
+        except KeyError:
+            print('incorrect city')
     if cmd == 'sky':
-        print('w.detailed_status')
+        try:
+            print(functions.get_weather(cities[voice.split()[-1]]).detailed_status)
+        except KeyError:
+            print('incorrect city')
     if cmd == 'wind':
-        print(functions.get_weather().wind())
+        try:
+            print(functions.get_weather(cities[voice.split()[-1]]).wind())
+        except KeyError:
+            print('incorrect city')
     if cmd == 'if_rain':
-        print(functions.get_weather().rain)
+        try:
+            print(functions.get_weather(cities[voice.split()[-1]]).rain)
+        except KeyError:
+            print('incorrect city')
     if cmd == 'humidity':
-        print(functions.get_weather().humidity)
+        try:
+            print(functions.get_weather(cities[voice.split()[-1]]).humidity)
+        except KeyError:
+            print('incorrect city')
     if cmd == 'corona':
         covid = Covid(source='worldometers')
         action = covid.get_status_by_country_name(countries[voice.split()[-1]])
