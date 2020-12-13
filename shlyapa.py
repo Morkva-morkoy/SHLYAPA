@@ -13,6 +13,7 @@ import vk_api
 from pyowm import OWM
 from pyowm.utils import config
 from pyowm.utils import timestamps
+from covid import Covid
 
 opts = {
     'names': ('шляпа', 'шляпы', 'шляпу'),
@@ -32,7 +33,8 @@ opts = {
         'sky': ('dasdas', 'какие сейчас осадки'),
         'wind_speed': ('dasdasd', 'какая сейчас ветeр'),
         'if_rain': ('dasdsad', 'сейчас есть дождь'),
-        'humidity': ('dasdja', 'какое сейчас давление')
+        'humidity': ('dasdja', 'какое сейчас давление'),
+        'corona': ('dasdasd', 'статистика короновируса')
     }
 }
 vk_names = {'dasd': 879796568, 'мамe': 2139749, 'роме': 617562550, 'мне': 370300823, 'духи': 310799106,
@@ -151,6 +153,10 @@ def execute_cmd(cmd, voice):
         print(functions.get_weather1().rain)
     if cmd == 'humidity':
         print(functions.get_weather1().humidity)
+    if cmd == 'corona':
+        covid = Covid(source='worldometers')
+        action = covid.get_status_by_country_name('Russia')
+        print('В России {} новых случаев за сегодня'.format(action['new_cases']))
 
 
 stop_listening = r.listen_in_background(m, callback)
