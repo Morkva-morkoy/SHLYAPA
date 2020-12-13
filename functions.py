@@ -50,11 +50,9 @@ with open('owm_token', 'r') as file:
     tok = file.read()
 
 
-def get_weather():
+def get_weather(city):
     owm = OWM(tok)
     mgr = owm.weather_manager()
-    observation = mgr.weather_at_place('Saint Petersburg, RU')
+    observation = mgr.weather_at_place(city)
     w = observation.weather
     return w
-
-
