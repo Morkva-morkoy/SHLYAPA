@@ -34,13 +34,16 @@ opts = {
         'wind_speed': ('dasdasd', 'какая сейчас ветeр'),
         'if_rain': ('dasdsad', 'сейчас есть дождь'),
         'humidity': ('dasdja', 'какое сейчас давление'),
-        'corona': ('dasdasd', 'статистика короновируса')
+        'corona': ('dasdasd', 'случаев короновируса')
     }
 }
 vk_names = {'dasd': 879796568, 'роме': 617562550, 'мне': 370300823, 'духи': 310799106,
             'витя': 429372253, 'вове': 97233590, 'королю': 332716512}
 list_months = ['bruh', 'январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь',
                'ноябрь', 'декабрь']
+
+counties = {'россии': 'Russia', 'украине': 'Ukraine', 'америке': 'US', 'индии': 'India', 'бразилии': 'Brazil', 'франции': 'France', 'великобритании': 'United Kingdom'}
+
 
 r = sr.Recognizer()
 m = sr.Microphone(device_index=0)
@@ -62,7 +65,7 @@ def callback(recognizer, audio):
         if voice.startswith(opts['names']):
             cmd = voice
             cmd = recognize_cmd(cmd)
-            execute_cmd(cmd['cmd'], voice)
+            execute_cmd(cmd['cmd'], voice, counties)
 
     except sr.UnknownValueError:
         print('[log] Голос не распознан')
@@ -99,7 +102,7 @@ soup = BeautifulSoup(course_page.content, 'html.parser')
 convert = soup.find_all('div', {'class': 'col-md-2 col-xs-9 _right mono-num'})
 
 
-def execute_cmd(cmd, voice):
+def execute_cmd(cmd, voice, countries):
     now = datetime.datetime.now()
     if cmd == 'cdate':
         speak(str('Сейчас' + str(now.day) + ',' + list_months[now.month]))
@@ -152,9 +155,8 @@ def execute_cmd(cmd, voice):
         print(functions.get_weather().humidity)
     if cmd == 'corona':
         covid = Covid(source='worldometers')
-        action = covid.get_status_by_country_name('Russia')
-        print('В России {} новых случаев за сегодня'.format(action['new_cases']))
-
+        action = covid.get_status_by_country_name(countries[voice.split()[-1]])
+        print('В {} {} новых случаев за сегодня'.format(voice.split()[-1], action['new_cases']))
 
 
 stop_listening = r.listen_in_background(m, callback)
