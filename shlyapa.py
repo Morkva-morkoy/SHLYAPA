@@ -157,3 +157,7 @@ stop_listening = r.listen_in_background(m, callback)
 
 while True:
     time.sleep(0.1)
+    time_now = '{}:{}'.format(datetime.datetime.now().hour, datetime.datetime.now().minute)
+    if time_now == note_time:
+        print(f'Вам пора {text_for_print}')
+        time.sleep(60)
