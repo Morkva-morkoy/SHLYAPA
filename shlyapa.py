@@ -89,7 +89,6 @@ note_time = functions.note()
 time_now = '{}:{}'.format(datetime.datetime.now().hour, datetime.datetime.now().minute)
 
 dollar_eur = 'https://www.cbr.ru/'
-weather = 'https://www.gismeteo.ru/weather-sankt-peterburg-4079/now/'
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
@@ -98,7 +97,6 @@ headers = {
 course_page = requests.get(dollar_eur, headers=headers)
 soup = BeautifulSoup(course_page.content, 'html.parser')
 convert = soup.find_all('div', {'class': 'col-md-2 col-xs-9 _right mono-num'})
-weather_for = soup.find_all('div', {'class': 'date xs fadeIn data-tz'})
 pass
 
 
