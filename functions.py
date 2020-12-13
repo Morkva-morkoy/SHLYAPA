@@ -30,6 +30,7 @@ def note():
             pass
         except UnboundLocalError:
             pass
+        return note_time
 
 with open('vk_token.txt') as file:
     token = file.read()
