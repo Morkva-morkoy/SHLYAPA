@@ -42,14 +42,14 @@ def sent(user_id, messagee):
         random_id=0)
 
 def get_weather():
-    owm = OWM('aad83395ec9296cd0663d1ac20472eb1')
+    owm = OWM('your API key')
     mgr = owm.weather_manager()
     observation = mgr.weather_at_place('Saint Petersburg, RU')
     w = observation.weather
     return w.temperature('celsius')
 
 def get_weather1():
-    owm = OWM('aad83395ec9296cd0663d1ac20472eb1')
+    owm = OWM('your API key')
     mgr = owm.weather_manager()
     observation = mgr.weather_at_place('Saint Petersburg, RU')
     w = observation.weather
