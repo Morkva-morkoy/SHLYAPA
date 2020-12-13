@@ -141,15 +141,15 @@ def execute_cmd(cmd, voice):
     if cmd == 'off':
         os.system("shutdown /p")
     if cmd == 'temp':
-        print(functions.get_weather()['temp'])
+        print(functions.get_weather().temperature('celsius')['temp'])
     if cmd == 'sky':
         print('w.detailed_status')
     if cmd == 'wind':
-        print(functions.get_weather1().wind())
+        print(functions.get_weather().wind())
     if cmd == 'if_rain':
-        print(functions.get_weather1().rain)
+        print(functions.get_weather().rain)
     if cmd == 'humidity':
-        print(functions.get_weather1().humidity)
+        print(functions.get_weather().humidity)
     if cmd == 'corona':
         covid = Covid(source='worldometers')
         action = covid.get_status_by_country_name('Russia')
