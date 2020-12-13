@@ -24,13 +24,13 @@ def note():
                 print(f'У вас осталось {time_diff // 60} часов {time_diff % 60} минут до того, чтобы {text_for_print}')
             else:
                 print('Вы прошляпили свой план')
+            return note_time
         except IndexError:
             pass
         except ValueError:
             pass
         except UnboundLocalError:
-            pass
-        return note_time
+            print('У вас нет планов')
 
 with open('vk_token.txt') as file:
     token = file.read()
@@ -42,15 +42,18 @@ def sent(user_id, messagee):
         message=messagee,
         random_id=0)
 
+with open('owm_token', 'r') as file:
+    tok = file.read()
+
 def get_weather():
-    owm = OWM('your API key')
+    owm = OWM(tok)
     mgr = owm.weather_manager()
     observation = mgr.weather_at_place('Saint Petersburg, RU')
     w = observation.weather
     return w.temperature('celsius')
 
 def get_weather1():
-    owm = OWM('your API key')
+    owm = OWM(tok)
     mgr = owm.weather_manager()
     observation = mgr.weather_at_place('Saint Petersburg, RU')
     w = observation.weather
