@@ -15,6 +15,8 @@ from pyowm.utils import config
 from pyowm.utils import timestamps
 from covid import Covid
 
+from constants import notes_file_path
+
 opts = {
     'names': ('шляпа', 'шляпы', 'шляпу'),
     'tbr': ('сколько', 'какое'),
@@ -38,7 +40,7 @@ opts = {
     }
 }
 vk_names = {'dasd': 879796568, 'роме': 617562550, 'мне': 370300823, 'духи': 310799106,
-            'витя': 429372253, 'вове': 97233590, 'королю': 332716512}
+            'витя': 429372253, 'вове': 97233590, 'арсению': 332716512}
 list_months = ['bruh', 'январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь',
                'ноябрь', 'декабрь']
 
@@ -86,7 +88,7 @@ def recognize_cmd(cmd):
     return RC
 
 
-with open('notes.txt', 'r') as file:
+with open(notes_file_path, 'r') as file:
     text_for_print = file.read()
 
 note_time = functions.note()
@@ -139,7 +141,7 @@ def execute_cmd(cmd, voice, countries, cities):
         voice = voice.split()
         voice_for_note = voice[3:]
         voice_for_note = ' '.join(voice_for_note)
-        with open('notes.txt', 'w') as file:
+        with open(notes_file_path, 'w') as file:
             file.writelines(voice_for_note)
     if cmd == 'note1':
         functions.note()
@@ -182,7 +184,7 @@ while True:
     time.sleep(0.1)
     time_now = '{}:{}'.format(datetime.datetime.now().hour, datetime.datetime.now().minute)
     if time_now == note_time:
-        print('Вам пора {}'.format(' '.join(text_for_print.split()[0:-2])))
-        speak('Вам пора {}'.format(' '.join(text_for_print.split()[0:-2])))
-        open('notes.txt', 'w').close()
+        print('Вам пора {}'.format(' '.join(text_for_print.split()[0:-1])))
+        speak('Вам пора {}'.format(' '.join(text_for_print.split()[0:-1])))
+        open(notes_file_path, 'w').close()
         time.sleep(60)
