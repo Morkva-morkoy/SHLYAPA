@@ -55,12 +55,6 @@ def get_weather():
     mgr = owm.weather_manager()
     observation = mgr.weather_at_place('Saint Petersburg, RU')
     w = observation.weather
-    return w.temperature('celsius')
-
-
-def get_weather1():
-    owm = OWM(tok)
-    mgr = owm.weather_manager()
-    observation = mgr.weather_at_place('Saint Petersburg, RU')
-    w = observation.weather
     return w
+
+
