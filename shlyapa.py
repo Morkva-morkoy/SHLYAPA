@@ -156,6 +156,7 @@ def execute_cmd(cmd, voice):
         print('В России {} новых случаев за сегодня'.format(action['new_cases']))
 
 
+
 stop_listening = r.listen_in_background(m, callback)
 
 while True:
