@@ -5,6 +5,7 @@ from pyowm import OWM
 from pyowm.utils import config
 from pyowm.utils import timestamps
 
+
 def note():
     with open('notes.txt', 'r') as file:
         try:
@@ -32,8 +33,10 @@ def note():
         except UnboundLocalError:
             print('У вас нет планов')
 
+
 with open('vk_token.txt') as file:
     token = file.read()
+
 
 def sent(user_id, messagee):
     vk = vk_api.VkApi(token=token).get_api()
@@ -42,8 +45,10 @@ def sent(user_id, messagee):
         message=messagee,
         random_id=0)
 
+
 with open('owm_token', 'r') as file:
     tok = file.read()
+
 
 def get_weather():
     owm = OWM(tok)
@@ -51,6 +56,7 @@ def get_weather():
     observation = mgr.weather_at_place('Saint Petersburg, RU')
     w = observation.weather
     return w.temperature('celsius')
+
 
 def get_weather1():
     owm = OWM(tok)
