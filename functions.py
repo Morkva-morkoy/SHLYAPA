@@ -47,7 +47,7 @@ def sent(user_id, messagee):
         random_id=0)
 
 
-with open('owm_token', 'r') as file:
+with open('owm_token.txt', 'r') as file:
     tok = file.read()
 
 
