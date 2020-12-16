@@ -73,7 +73,7 @@ def callback(recognizer, audio):
     except sr.UnknownValueError:
         print('[log] Голос не распознан')
     except sr.RequestError:
-        print('[log] Bruh')
+        print('[log] Bruuh')
 
 
 def recognize_cmd(cmd):
