@@ -25,13 +25,14 @@ def note():
                 print(f'У вас осталось {time_diff // 60} часов {time_diff % 60} минут до того, чтобы {text_for_print}')
             else:
                 print('Вы прошляпили свой план')
-            return note_time
         except IndexError:
             pass
         except ValueError:
             pass
-        except UnboundLocalError:
-            print('У вас нет планов')
+    try:
+        return note_time
+    except UnboundLocalError:
+        print('У вас нет планов')
 
 
 with open('vk_token.txt') as file:
