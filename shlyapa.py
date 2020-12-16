@@ -14,7 +14,6 @@ from pyowm import OWM
 from pyowm.utils import config
 from pyowm.utils import timestamps
 from covid import Covid
-
 from constants import notes_file_path
 
 opts = {
