@@ -125,7 +125,7 @@ def execute_cmd(cmd, voice, countries, cities):
             USER_NAME = getpass.getuser()
             os.startfile('C:\\Users\\%s\\Desktop\\{}'.format(voice_for_apps) %USER_NAME)
         except Exception:
-            pass
+            print('incorrect shortcut name')
     if cmd == 'send':
         try:
             voice_for_vk = voice.split()
