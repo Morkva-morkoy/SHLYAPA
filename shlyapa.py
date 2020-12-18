@@ -176,7 +176,6 @@ def execute_cmd(cmd, voice, countries, cities):
         action = covid.get_status_by_country_name(countries[voice.split()[-1]])
         print('В {} {} новых случаев за сегодня'.format(voice.split()[-1], action['new_cases']))
 
-
 stop_listening = r.listen_in_background(m, callback)
 
 while True:
