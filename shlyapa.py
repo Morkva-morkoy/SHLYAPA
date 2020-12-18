@@ -14,6 +14,7 @@ from pyowm import OWM
 from pyowm.utils import config
 from pyowm.utils import timestamps
 from covid import Covid
+import getpass
 
 opts = {
     'names': ('шляпа', 'шляпы', 'шляпу'),
@@ -121,7 +122,8 @@ def execute_cmd(cmd, voice, countries, cities):
             voice_for_apps = voice.split()
             voice_for_apps = voice_for_apps[2:]
             voice_for_apps = ' '.join(voice_for_apps)
-            os.startfile('C:\\Users\\Роман\\Desktop\\{}'.format(voice_for_apps))
+            USER_NAME = getpass.getuser()
+            os.startfile('C:\\Users\\%s\\Desktop\\{}'.format(voice_for_apps) %USER_NAME)
         except Exception:
             pass
     if cmd == 'send':
@@ -181,7 +183,7 @@ while True:
     time.sleep(0.1)
     time_now = '{}:{}'.format(datetime.datetime.now().hour, datetime.datetime.now().minute)
     if time_now == note_time:
-        print('Вам пора {}'.format(' '.join(text_for_print.split()[0:-1])))
-        speak('Вам пора {}'.format(' '.join(text_for_print.split()[0:-1])))
+        print('Вам пора {}'.format(' '.join(text_for_print.split()[0:-2])))
+        speak('Вам пора {}'.format(' '.join(text_for_print.split()[0:-2])))
         open('notes.txt', 'w').close()
         time.sleep(60)
