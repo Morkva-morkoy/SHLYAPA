@@ -3,3 +3,4 @@ __pycache__
 .vscode
 .venv
 vk_token.txt
+owm_token.txt
