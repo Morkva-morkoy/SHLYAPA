@@ -1,3 +1,5 @@
 __pycache__
 .idea
 .vscode
+.venv
+vk_token.txt

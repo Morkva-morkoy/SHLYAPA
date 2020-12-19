@@ -14,28 +14,28 @@ from pyowm import OWM
 from pyowm.utils import config
 from pyowm.utils import timestamps
 from covid import Covid
-from constants import notes_file_path
+import getpass
 
 opts = {
     'names': ('шляпа', 'шляпы', 'шляпу'),
-    'tbr': ('сколько', 'какое'),
+    'tbr': ('сколько', 'какое', 'блин'),
     'cmds': {
         'ctime': ('сейчас времени', 'сейчас время', 'время', 'времени'),
         'cdate': ('сегодня число', 'число'),
         'web_search': ('найди', 'найти'),
         'course_usd': ('курс доллара', 'доллар в рублях'),
         'course_eur': ('курс евро', 'евро в рублях'),
-        'apps': ('открой', 'asdasdasd'),
-        'send': ('отправь', 'dsadasdasdsa'),
+        'apps': ('открой', 'запусти'),
+        'send': ('отправь', 'сообщение'),
         'note': ('напомни', 'напомни мне'),
         'note1': ('мои планы', 'что у меня запланировано'),
-        'off': ('dasdasd', 'выключи компьютер'),
-        'temp': ('dasdahs', 'какая сейчас температура'),
-        'sky': ('dasdas', 'какие сейчас осадки'),
-        'wind_speed': ('dasdasd', 'какая сейчас ветeр'),
+        'off': ('выключи', 'выключи компьютер'),
+        'temp': ('температура', 'какая сейчас температура'),
+        'sky': ('осадки', 'какие сейчас осадки'),
+        'wind_speed': ('ветер', 'какая сейчас ветeр', 'скорость ветра'),
         'if_rain': ('dasdsad', 'сейчас есть дождь'),
-        'humidity': ('dasdja', 'какоая сейчас влажность'),
-        'corona': ('dasdasd', 'случаев короновируса')
+        'humidity': ('влажность', 'какоая сейчас влажность'),
+        'corona': ('коронавирус', 'случаев короновируса')
     }
 }
 vk_names = {'dasd': 879796568, 'роме': 617562550, 'мне': 370300823, 'духи': 310799106,
@@ -73,7 +73,7 @@ def callback(recognizer, audio):
     except sr.UnknownValueError:
         print('[log] Голос не распознан')
     except sr.RequestError:
-        print('[log] Bruuh')
+        print('[log] Bruh')
 
 
 def recognize_cmd(cmd):
@@ -87,7 +87,7 @@ def recognize_cmd(cmd):
     return RC
 
 
-with open(notes_file_path, 'r') as file:
+with open('notes.txt', 'r') as file:
     text_for_print = file.read()
 
 note_time = functions.note()
@@ -103,7 +103,6 @@ headers = {
 course_page = requests.get(dollar_eur, headers=headers)
 soup = BeautifulSoup(course_page.content, 'html.parser')
 convert = soup.find_all('div', {'class': 'col-md-2 col-xs-9 _right mono-num'})
-
 
 def execute_cmd(cmd, voice, countries, cities):
     now = datetime.datetime.now()
@@ -122,10 +121,10 @@ def execute_cmd(cmd, voice, countries, cities):
             voice_for_apps = voice.split()
             voice_for_apps = voice_for_apps[2:]
             voice_for_apps = ' '.join(voice_for_apps)
-            os.startfile('C:\\Users\\SHLYAPA\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\{}'.format(
-                voice_for_apps))
+            USER_NAME = getpass.getuser()
+            os.startfile('C:\\Users\\%s\\Desktop\\{}'.format(voice_for_apps) %USER_NAME)
         except Exception:
-            pass
+            print('incorrect shortcut name')
     if cmd == 'send':
         try:
             voice_for_vk = voice.split()
@@ -140,12 +139,16 @@ def execute_cmd(cmd, voice, countries, cities):
         voice = voice.split()
         voice_for_note = voice[3:]
         voice_for_note = ' '.join(voice_for_note)
-        with open(notes_file_path, 'w') as file:
+        with open('notes.txt', 'w') as file:
             file.writelines(voice_for_note)
     if cmd == 'note1':
         functions.note()
     if cmd == 'off':
-        os.system("shutdown /p")
+        check = str(input('Вы уверены что хотите завершить работу компьютера? '))
+        if check == 'да':
+            os.system("shutdown /p")
+        else:
+            pass
     if cmd == 'temp':
         try:
             print(functions.get_weather(cities[voice.split()[-1]]).temperature('celsius')['temp'])
@@ -176,14 +179,13 @@ def execute_cmd(cmd, voice, countries, cities):
         action = covid.get_status_by_country_name(countries[voice.split()[-1]])
         print('В {} {} новых случаев за сегодня'.format(voice.split()[-1], action['new_cases']))
 
-
 stop_listening = r.listen_in_background(m, callback)
 
 while True:
     time.sleep(0.1)
     time_now = '{}:{}'.format(datetime.datetime.now().hour, datetime.datetime.now().minute)
     if time_now == note_time:
-        print('Вам пора {}'.format(' '.join(text_for_print.split()[0:-1])))
-        speak('Вам пора {}'.format(' '.join(text_for_print.split()[0:-1])))
-        open(notes_file_path, 'w').close()
+        print('Вам пора {}'.format(' '.join(text_for_print.split()[0:-2])))
+        speak('Вам пора {}'.format(' '.join(text_for_print.split()[0:-2])))
+        open('notes.txt', 'w').close()
         time.sleep(60)
