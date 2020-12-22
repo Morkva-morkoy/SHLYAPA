@@ -138,10 +138,7 @@ def execute_cmd(cmd, voice, countries, cities):
     if cmd == "ctime":
         speak("Сейчас" + str(now.hour) + ":" + str(now.minute))
     if cmd == "web_search":
-        try:
-            webbrowser.open_new_tab("https://www.google.com/search?q={}".format("+".join(voice.split()[2:])))
-        finally:
-            print('bruh')
+        webbrowser.open_new_tab("https://www.google.com/search?q={}".format("+".join(voice.split()[2:])))
     if cmd == "course_usd":
         speak("{} рублей".format(convert[0].text))
     if cmd == "course_eur":
