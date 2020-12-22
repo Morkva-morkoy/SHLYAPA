@@ -20,23 +20,21 @@ opts = {
     "names": ("шляпа", "шляпы", "шляпу"),
     "tbr": ("сколько", "какое", "блин"),
     "cmds": {
-        "ctime": ("сейчас времени", "сейчас время", "время", "времени"),
-        "cdate": ("сегодня число", "число"),
-        "web_search": ("найди", "найти"),
+        "off": ("dadads", "компьютер"),
+        "web_search": ("найди", "dasdsa"),
         "course_usd": ("курс доллара", "доллар в рублях"),
         "course_eur": ("курс евро", "евро в рублях"),
         "apps": ("открой", "запусти"),
         "send": ("отправь", "сообщение"),
         "note": ("напомни", "напомни мне"),
         "note1": ("мои планы", "что у меня запланировано"),
-        "off": ("выключи", "выключи компьютер"),
         "temp": ("температура", "какая сейчас температура"),
         "sky": ("осадки", "какие сейчас осадки"),
         "wind_speed": ("ветер", "какая сейчас ветeр", "скорость ветра"),
         "if_rain": ("dasdsad", "сейчас есть дождь"),
         "humidity": ("влажность", "какоая сейчас влажность"),
-        "corona": ("коронавирус", "случаев короновируса"),
-    },
+        "corona": ("коронавирус", "случаев короновируса")
+    }
 }
 vk_names = {
     "dasd": 879796568,
@@ -45,7 +43,7 @@ vk_names = {
     "духи": 310799106,
     "витя": 429372253,
     "вове": 97233590,
-    "арсению": 332716512,
+    "арсению": 526584669
 }
 list_months = [
     "bruh",
@@ -60,9 +58,8 @@ list_months = [
     "сентябрь",
     "октябрь",
     "ноябрь",
-    "декабрь",
+    "декабрь"
 ]
-
 counties = {
     "россии": "Russia",
     "украине": "Ukraine",
@@ -70,7 +67,7 @@ counties = {
     "индии": "India",
     "бразилии": "Brazil",
     "франции": "France",
-    "великобритании": "United Kingdom",
+    "великобритании": "United Kingdom"
 }
 
 cities = {"санкт-петербурге": "Saint Petersburg, RU", "москве": "Moscow, RU"}
@@ -134,16 +131,17 @@ convert = soup.find_all("div", {"class": "col-md-2 col-xs-9 _right mono-num"})
 
 
 def execute_cmd(cmd, voice, countries, cities):
-    global USER_NAME, voice_for_apps
     now = datetime.datetime.now()
+
     if cmd == "cdate":
         speak(str("Сейчас" + str(now.day) + "," + list_months[now.month]))
     if cmd == "ctime":
         speak("Сейчас" + str(now.hour) + ":" + str(now.minute))
     if cmd == "web_search":
-        webbrowser.open_new_tab(
-            "https://www.google.com/search?q={}".format("+".join(voice.split()[2:]))
-        )
+        try:
+            webbrowser.open_new_tab("https://www.google.com/search?q={}".format("+".join(voice.split()[2:])))
+        finally:
+            print('bruh')
     if cmd == "course_usd":
         speak("{} рублей".format(convert[0].text))
     if cmd == "course_eur":
