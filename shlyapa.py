@@ -33,8 +33,8 @@ opts = {
         "wind_speed": ("ветер", "какая сейчас ветeр", "скорость ветра"),
         "if_rain": ("dasdsad", "сейчас есть дождь"),
         "humidity": ("влажность", "какоая сейчас влажность"),
-        "corona": ("коронавирус", "случаев короновируса")
-    }
+        "corona": ("коронавирус", "случаев короновируса"),
+    },
 }
 vk_names = {
     "dasd": 879796568,
@@ -43,7 +43,7 @@ vk_names = {
     "духи": 310799106,
     "витя": 429372253,
     "вове": 97233590,
-    "арсению": 526584669
+    "арсению": 526584669,
 }
 list_months = [
     "bruh",
@@ -58,7 +58,7 @@ list_months = [
     "сентябрь",
     "октябрь",
     "ноябрь",
-    "декабрь"
+    "декабрь",
 ]
 counties = {
     "россии": "Russia",
@@ -67,7 +67,7 @@ counties = {
     "индии": "India",
     "бразилии": "Brazil",
     "франции": "France",
-    "великобритании": "United Kingdom"
+    "великобритании": "United Kingdom",
 }
 
 cities = {"санкт-петербурге": "Saint Petersburg, RU", "москве": "Moscow, RU"}
@@ -138,7 +138,9 @@ def execute_cmd(cmd, voice, countries, cities):
     if cmd == "ctime":
         speak("Сейчас" + str(now.hour) + ":" + str(now.minute))
     if cmd == "web_search":
-        webbrowser.open_new_tab("https://www.google.com/search?q={}".format("+".join(voice.split()[2:])))
+        webbrowser.open_new_tab(
+            "https://www.google.com/search?q={}".format("+".join(voice.split()[2:]))
+        )
     if cmd == "course_usd":
         speak("{} рублей".format(convert[0].text))
     if cmd == "course_eur":
@@ -237,8 +239,10 @@ stop_listening = r.listen_in_background(m, callback)
 
 while True:
     time.sleep(0.1)
-    time_now = "{}:{}".format(
-        datetime.datetime.now().hour, datetime.datetime.now().minute
+    time_now = (
+            f"{datetime.datetime.now().hour}:"
+            + list(f"0{datetime.datetime.now().minute}")[-2]
+            + list(f"0{datetime.datetime.now().minute}")[-1]
     )
     if time_now == note_time:
         print("Вам пора {}".format(" ".join(text_for_print.split()[0:-2])))
