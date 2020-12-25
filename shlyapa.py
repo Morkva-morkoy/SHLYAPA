@@ -18,8 +18,10 @@ import getpass
 
 opts = {
     "names": ("шляпа", "шляпы", "шляпу"),
-    "tbr": ("сколько", "какое", "блин"),
+    "tbr": ("сколько", "какое", "блин", "выключи"),
     "cmds": {
+        "cdate": ("dakjds", "сегодня число"),
+        "ctime": ("dasda", "сейчас времени"),
         "off": ("dadads", "компьютер"),
         "web_search": ("найди", "dasdsa"),
         "course_usd": ("курс доллара", "доллар в рублях"),
@@ -29,17 +31,17 @@ opts = {
         "note": ("напомни", "напомни мне"),
         "note1": ("мои планы", "что у меня запланировано"),
         "temp": ("температура", "какая сейчас температура"),
-        "sky": ("осадки", "какие сейчас осадки"),
-        "wind_speed": ("ветер", "какая сейчас ветeр", "скорость ветра"),
+        "sky": ("осадки", "сейчас осадки"),
+        "wind_speed": ("ветер", "скорость ветра"),
         "if_rain": ("dasdsad", "сейчас есть дождь"),
-        "humidity": ("влажность", "какоая сейчас влажность"),
+        "humidity": ("влажность", "сейчас влажность"),
         "corona": ("коронавирус", "случаев короновируса"),
     },
 }
 vk_names = {
     "dasd": 879796568,
     "роме": 617562550,
-    "мне": 370300823,
+    "мне": 350291456,
     "духи": 310799106,
     "витя": 429372253,
     "вове": 97233590,
@@ -71,6 +73,10 @@ counties = {
 }
 
 cities = {"санкт-петербурге": "Saint Petersburg, RU", "москве": "Moscow, RU"}
+days = {
+    "завтра": datetime.datetime.now().day + 1,
+    "послезавтра": datetime.datetime.now().day + 2,
+}
 
 r = sr.Recognizer()
 m = sr.Microphone(device_index=0)
@@ -92,7 +98,7 @@ def callback(recognizer, audio):
         if voice.startswith(opts["names"]):
             cmd = voice
             cmd = recognize_cmd(cmd)
-            execute_cmd(cmd["cmd"], voice, counties, cities)
+            execute_cmd(cmd["cmd"], voice, counties, cities, days)
 
     except sr.UnknownValueError:
         print("[log] Голос не распознан")
@@ -130,7 +136,7 @@ soup = BeautifulSoup(course_page.content, "html.parser")
 convert = soup.find_all("div", {"class": "col-md-2 col-xs-9 _right mono-num"})
 
 
-def execute_cmd(cmd, voice, countries, cities):
+def execute_cmd(cmd, voice, countries, cities, days):
     now = datetime.datetime.now()
 
     if cmd == "cdate":
@@ -142,8 +148,10 @@ def execute_cmd(cmd, voice, countries, cities):
             "https://www.google.com/search?q={}".format("+".join(voice.split()[2:]))
         )
     if cmd == "course_usd":
+        print("{} рублей".format(convert[0].text))
         speak("{} рублей".format(convert[0].text))
     if cmd == "course_eur":
+        print("{} рублей".format(convert[2].text))
         speak("{} рублей".format(convert[2].text))
     if cmd == "apps":
         try:
@@ -203,32 +211,46 @@ def execute_cmd(cmd, voice, countries, cities):
                     "temp"
                 ]
             )
+            speak(
+                functions.get_weather(cities[voice.split()[-1]]).temperature("celsius")[
+                    "temp"
+                ]
+            )
         except KeyError:
             print("incorrect city")
     if cmd == "sky":
         try:
             print(functions.get_weather(cities[voice.split()[-1]]).detailed_status)
+            speak(functions.get_weather(cities[voice.split()[-1]]).detailed_status)
         except KeyError:
             print("incorrect city")
     if cmd == "wind":
         try:
             print(functions.get_weather(cities[voice.split()[-1]]).wind())
+            speak(functions.get_weather(cities[voice.split()[-1]]).wind())
         except KeyError:
             print("incorrect city")
     if cmd == "if_rain":
         try:
             print(functions.get_weather(cities[voice.split()[-1]]).rain)
+            speak(functions.get_weather(cities[voice.split()[-1]]).rain)
         except KeyError:
             print("incorrect city")
     if cmd == "humidity":
         try:
             print(functions.get_weather(cities[voice.split()[-1]]).humidity)
+            speak(functions.get_weather(cities[voice.split()[-1]]).humidity)
         except KeyError:
             print("incorrect city")
     if cmd == "corona":
         covid = Covid(source="worldometers")
         action = covid.get_status_by_country_name(countries[voice.split()[-1]])
         print(
+            "В {} {} новых случаев за сегодня".format(
+                voice.split()[-1], action["new_cases"]
+            )
+        )
+        speak(
             "В {} {} новых случаев за сегодня".format(
                 voice.split()[-1], action["new_cases"]
             )
@@ -240,9 +262,9 @@ stop_listening = r.listen_in_background(m, callback)
 while True:
     time.sleep(0.1)
     time_now = (
-            f"{datetime.datetime.now().hour}:"
-            + list(f"0{datetime.datetime.now().minute}")[-2]
-            + list(f"0{datetime.datetime.now().minute}")[-1]
+        f"{datetime.datetime.now().hour}:"
+        + list(f"0{datetime.datetime.now().minute}")[-2]
+        + list(f"0{datetime.datetime.now().minute}")[-1]
     )
     if time_now == note_time:
         print("Вам пора {}".format(" ".join(text_for_print.split()[0:-2])))
