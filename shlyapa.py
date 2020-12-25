@@ -269,8 +269,11 @@ while True:
             time.sleep(60)
     except TypeError:
         pass
-    if time_now == note_time:
-        print("Вам пора {}".format(" ".join(text_for_print.split()[0:-2])))
-        speak("Вам пора {}".format(" ".join(text_for_print.split()[0:-2])))
-        open("notes.txt", "w").close()
+    if datetime.datetime.now().isoweekday() != day_note:
         time.sleep(60)
+    else:
+        if time_now == note_time:
+            print("Вам пора {}".format(" ".join(text_for_print.split()[0:-2])))
+            speak("Вам пора {}".format(" ".join(text_for_print.split()[0:-2])))
+            open("notes.txt", "w").close()
+            time.sleep(60)
