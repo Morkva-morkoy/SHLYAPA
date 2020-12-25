@@ -1,4 +1,4 @@
-import functions
+from functions import *
 import os
 import speech_recognition as sr
 import datetime
@@ -30,12 +30,13 @@ opts = {
         "send": ("отправь", "сообщение"),
         "note": ("напомни", "напомни мне"),
         "note1": ("мои планы", "что у меня запланировано"),
-        "temp": ("температура", "какая сейчас температура"),
+        "temp": ("температура", "сейчас температура"),
         "sky": ("осадки", "сейчас осадки"),
         "wind_speed": ("ветер", "скорость ветра"),
-        "if_rain": ("dasdsad", "сейчас есть дождь"),
+        "if_rain": ("дождь", "сейчас есть дождь"),
         "humidity": ("влажность", "сейчас влажность"),
         "corona": ("коронавирус", "случаев короновируса"),
+        "student": ("ddsadas", "работа студентом в этом есть прикол"),
     },
 }
 vk_names = {
@@ -120,7 +121,7 @@ def recognize_cmd(cmd):
 with open("notes.txt", "r") as file:
     text_for_print = file.read()
 
-note_time = functions.note()
+note_time = note()
 
 time_now = "{}:{}".format(datetime.datetime.now().hour, datetime.datetime.now().minute)
 
@@ -187,7 +188,7 @@ def execute_cmd(cmd, voice, countries, cities, days):
             voice_for_id = vk_names[voice_for_id]
             voice_for_message = voice_for_vk[3:]
             voice_for_message = " ".join(voice_for_message)
-            functions.sent(voice_for_id, voice_for_message)
+            sent(voice_for_id, voice_for_message)
         except Exception:
             pass
     if cmd == "note":
@@ -197,7 +198,7 @@ def execute_cmd(cmd, voice, countries, cities, days):
         with open("notes.txt", "w") as file:
             file.writelines(voice_for_note)
     if cmd == "note1":
-        functions.note()
+        note()
     if cmd == "off":
         check = str(input("Вы уверены что хотите завершить работу компьютера? "))
         if check == "да":
@@ -206,40 +207,32 @@ def execute_cmd(cmd, voice, countries, cities, days):
             pass
     if cmd == "temp":
         try:
-            print(
-                functions.get_weather(cities[voice.split()[-1]]).temperature("celsius")[
-                    "temp"
-                ]
-            )
-            speak(
-                functions.get_weather(cities[voice.split()[-1]]).temperature("celsius")[
-                    "temp"
-                ]
-            )
+            print(get_weather(cities[voice.split()[-1]]).temperature("celsius")["temp"])
+            speak(get_weather(cities[voice.split()[-1]]).temperature("celsius")["temp"])
         except KeyError:
             print("incorrect city")
     if cmd == "sky":
         try:
-            print(functions.get_weather(cities[voice.split()[-1]]).detailed_status)
-            speak(functions.get_weather(cities[voice.split()[-1]]).detailed_status)
+            print(get_weather(cities[voice.split()[-1]]).detailed_status)
+            speak(get_weather(cities[voice.split()[-1]]).detailed_status)
         except KeyError:
             print("incorrect city")
     if cmd == "wind":
         try:
-            print(functions.get_weather(cities[voice.split()[-1]]).wind())
-            speak(functions.get_weather(cities[voice.split()[-1]]).wind())
+            print(get_weather(cities[voice.split()[-1]]).wind())
+            speak(get_weather(cities[voice.split()[-1]]).wind())
         except KeyError:
             print("incorrect city")
     if cmd == "if_rain":
         try:
-            print(functions.get_weather(cities[voice.split()[-1]]).rain)
-            speak(functions.get_weather(cities[voice.split()[-1]]).rain)
+            print(get_weather(cities[voice.split()[-1]]).rain)
+            speak(get_weather(cities[voice.split()[-1]]).rain)
         except KeyError:
             print("incorrect city")
     if cmd == "humidity":
         try:
-            print(functions.get_weather(cities[voice.split()[-1]]).humidity)
-            speak(functions.get_weather(cities[voice.split()[-1]]).humidity)
+            print(get_weather(cities[voice.split()[-1]]).humidity)
+            speak(get_weather(cities[voice.split()[-1]]).humidity)
         except KeyError:
             print("incorrect city")
     if cmd == "corona":
@@ -255,6 +248,10 @@ def execute_cmd(cmd, voice, countries, cities, days):
                 voice.split()[-1], action["new_cases"]
             )
         )
+    if cmd == "student":
+        for i in range(5):
+            speak("for real")
+            speak("ealealealealealealealealealealealealealbruh")
 
 
 stop_listening = r.listen_in_background(m, callback)
@@ -266,6 +263,12 @@ while True:
         + list(f"0{datetime.datetime.now().minute}")[-2]
         + list(f"0{datetime.datetime.now().minute}")[-1]
     )
+    try:
+        day_note = day_note()
+        if datetime.datetime.now().isoweekday() == day_note:
+            time.sleep(60)
+    except TypeError:
+        pass
     if time_now == note_time:
         print("Вам пора {}".format(" ".join(text_for_print.split()[0:-2])))
         speak("Вам пора {}".format(" ".join(text_for_print.split()[0:-2])))

@@ -25,14 +25,16 @@ def note():
             time_for_note = text[lent - 1].replace(":", " ").split()
             hour_note = int(time_for_note[0])
             minute_note = int(time_for_note[1])
-            day_note = week_days[text[-2]]
+            if text[-2] == "в":
+                day_note = datetime.datetime.now().isoweekday()
+            else:
+                day_note = text[-2]
             hour_now = datetime.datetime.now().hour
             minute_now = datetime.datetime.now().minute
             minute_now += hour_now * 60
             minute_note += hour_note * 60
             day_now = datetime.datetime.now().isoweekday()
             time_diff = minute_note - minute_now
-            day_diff = day_note - day_now
             note_time = ":".join(time_for_note)
             if day_now == day_note:
                 if time_diff >= 0:
@@ -43,10 +45,7 @@ def note():
                     print("Вы прошляпили свой план")
 
             else:
-                print(
-                    f"У вас осталось {day_diff} дней {time_diff // 60} часов {time_diff % 60} минут до того, чтобы {text_for_print}"
-                )
-
+                print(f"Вы планировали {text_for_print}")
 
         except IndexError:
             pass
@@ -57,6 +56,20 @@ def note():
             return note_time
         except UnboundLocalError:
             print("У вас нет планов")
+
+
+def day_note():
+    with open("notes.txt", "r") as file:
+        try:
+            text_for_print = file.read()
+            text = text_for_print.split()
+            if text[-2] == "в":
+                day_note = datetime.datetime.now().isoweekday()
+            else:
+                day_note = text[-2]
+            return day_note
+        except IndexError:
+            pass
 
 
 with open("vk_token.txt") as file:
