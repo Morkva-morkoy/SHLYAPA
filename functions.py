@@ -15,6 +15,7 @@ week_days = {
     "воскресение": 7,
 }
 
+
 def note():
     with open("notes.txt", "r") as file:
         try:
@@ -51,7 +52,6 @@ def note():
             pass
         except ValueError:
             pass
-
 
         try:
             return note_time
