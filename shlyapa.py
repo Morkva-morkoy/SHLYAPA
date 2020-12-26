@@ -39,6 +39,7 @@ opts = {
         "student": ("ddsadas", "работа студентом в этом есть прикол"),
     },
 }
+
 vk_names = {
     "dasd": 879796568,
     "роме": 617562550,
@@ -78,6 +79,8 @@ days = {
     "завтра": datetime.datetime.now().day + 1,
     "послезавтра": datetime.datetime.now().day + 2,
 }
+
+user_name = getpass.getuser()
 
 r = sr.Recognizer()
 m = sr.Microphone(device_index=0)
@@ -129,7 +132,7 @@ dollar_eur = "https://www.cbr.ru/"
 
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-    "Chrome/87.0.4280.66 Safari/537.36"
+                  "Chrome/87.0.4280.66 Safari/537.36"
 }
 
 course_page = requests.get(dollar_eur, headers=headers)
@@ -145,6 +148,7 @@ def execute_cmd(cmd, voice, countries, cities, days):
     if cmd == "ctime":
         speak("Сейчас" + str(now.hour) + ":" + str(now.minute))
     if cmd == "web_search":
+        a = "https://www.google.com/search?q={}".format("+".join(voice.split()[2:]))
         webbrowser.open_new_tab(
             "https://www.google.com/search?q={}".format("+".join(voice.split()[2:]))
         )
@@ -155,31 +159,52 @@ def execute_cmd(cmd, voice, countries, cities, days):
         print("{} рублей".format(convert[2].text))
         speak("{} рублей".format(convert[2].text))
     if cmd == "apps":
+        # voice_for_apps = voice.split()[2:]
+        # voice_for_apps = ' '.join(voice_for_apps)
+        # prefix_list = [
+        #     "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\",
+        #     "C:\\Users\\{}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\".format(user_name),
+        #     "C:\\Users\\{}\\Desktop\\".format(user_name),
+        # ]
+        # for i, prefix in enumerate(prefix_list):
+        #     path = os.path.join(prefix, voice_for_apps)
+        #     try:
+        #         os.startfile(path)
+        #     except FileNotFoundError:
+        #         if i == len(prefix_list) - 1:
+        #             print('incorrect app')
+        #         else:
+        #             continue
+        #     else:
+        #         break
+
         try:
             voice_for_apps = voice.split()
             voice_for_apps = voice_for_apps[2:]
             voice_for_apps = " ".join(voice_for_apps)
             USER_NAME = getpass.getuser()
-            os.startfile(
-                "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\{}".format(
-                    voice_for_apps
-                )
-            )
-        except Exception:
+            os.startfile("C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\{}\\{}".format(
+                voice_for_apps, voice_for_apps))
+
+        except FileNotFoundError:
             try:
                 os.startfile(
-                    "C:\\Users\\%s\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\{}".format(
-                        voice_for_apps
+                    "C:\\Users\\{}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\{}".format(
+                        USER_NAME, voice_for_apps
                     )
-                    % USER_NAME
+
                 )
-            except Exception:
+            except FileNotFoundError:
                 try:
-                    os.startfile(
-                        "C:\\Users\\%s\\Desktop\\{}".format(voice_for_apps) % USER_NAME
-                    )
-                except Exception:
-                    print("incorrect app")
+                    os.startfile("C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\{}".format(
+                        voice_for_apps))
+                except FileNotFoundError:
+                    try:
+                        os.startfile(
+                            "C:\\Users\\{}\\Desktop\\{}".format(USER_NAME, voice_for_apps)
+                        )
+                    except FileNotFoundError:
+                        print("incorrect app")
 
     if cmd == "send":
         try:
@@ -259,14 +284,16 @@ stop_listening = r.listen_in_background(m, callback)
 while True:
     time.sleep(0.1)
     time_now = (
-        f"{datetime.datetime.now().hour}:"
-        + list(f"0{datetime.datetime.now().minute}")[-2]
-        + list(f"0{datetime.datetime.now().minute}")[-1]
+            f"{datetime.datetime.now().hour}:"
+            + list(f"0{datetime.datetime.now().minute}")[-2]
+            + list(f"0{datetime.datetime.now().minute}")[-1]
     )
     try:
         day_note = day_note()
         if datetime.datetime.now().isoweekday() == day_note:
             time.sleep(60)
+            open("notes.txt", "w").close()
+
     except TypeError:
         pass
     if datetime.datetime.now().isoweekday() != day_note:

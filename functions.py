@@ -28,7 +28,7 @@ def note():
             if text[-2] == "в":
                 day_note = datetime.datetime.now().isoweekday()
             else:
-                day_note = text[-2]
+                day_note = week_days[text[-2]]
             hour_now = datetime.datetime.now().hour
             minute_now = datetime.datetime.now().minute
             minute_now += hour_now * 60
