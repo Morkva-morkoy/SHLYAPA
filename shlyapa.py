@@ -23,13 +23,12 @@ opts = {
         "cdate": ("dakjds", "сегодня число"),
         "ctime": ("dasda", "сейчас времени"),
         "off": ("dadads", "компьютер"),
-        "web_search": ("найди", "dasdsa"),
         "course_usd": ("курс доллара", "доллар в рублях"),
         "course_eur": ("курс евро", "евро в рублях"),
         "apps": ("открой", "запусти"),
         "send": ("отправь", "сообщение"),
         "note": ("напомни", "напомни мне"),
-        "note1": ("мои планы", "что у меня запланировано"),
+        "note1": ("мои планы", "планы"),
         "temp": ("температура", "сейчас температура"),
         "sky": ("осадки", "сейчас осадки"),
         "wind_speed": ("ветер", "скорость ветра"),
@@ -37,6 +36,8 @@ opts = {
         "humidity": ("влажность", "сейчас влажность"),
         "corona": ("коронавирус", "случаев короновируса"),
         "student": ("ddsadas", "работа студентом в этом есть прикол"),
+        "web_search": ("найди", "dasdasd"),
+        "thanks": ("ты молодец", "dasojdhas"),
     },
 }
 
@@ -95,6 +96,17 @@ def speak(what):
     engine.runAndWait()
 
 
+def recognize_cmd(cmd):
+    RC = {"cmd": "", "percent": 0}
+    for c, v in opts["cmds"].items():
+        for i in v:
+            vrt = fuzz.ratio(cmd, i)
+            if vrt > RC["percent"]:
+                RC["cmd"] = c
+                RC["percent"] = vrt
+    return RC
+
+
 def callback(recognizer, audio):
     try:
         voice = recognizer.recognize_google(audio, language="ru-RU").lower()
@@ -108,17 +120,6 @@ def callback(recognizer, audio):
         print("[log] Голос не распознан")
     except sr.RequestError:
         print("[log] Bruh")
-
-
-def recognize_cmd(cmd):
-    RC = {"cmd": "", "percent": 0}
-    for c, v in opts["cmds"].items():
-        for i in v:
-            vrt = fuzz.ratio(cmd, i)
-            if vrt > RC["percent"]:
-                RC["cmd"] = c
-                RC["percent"] = vrt
-    return RC
 
 
 with open("notes.txt", "r") as file:
@@ -147,11 +148,6 @@ def execute_cmd(cmd, voice, countries, cities, days):
         speak(str("Сейчас" + str(now.day) + "," + list_months[now.month]))
     if cmd == "ctime":
         speak("Сейчас" + str(now.hour) + ":" + str(now.minute))
-    if cmd == "web_search":
-        a = "https://www.google.com/search?q={}".format("+".join(voice.split()[2:]))
-        webbrowser.open_new_tab(
-            "https://www.google.com/search?q={}".format("+".join(voice.split()[2:]))
-        )
     if cmd == "course_usd":
         print("{} рублей".format(convert[0].text))
         speak("{} рублей".format(convert[0].text))
@@ -277,6 +273,13 @@ def execute_cmd(cmd, voice, countries, cities, days):
         for i in range(5):
             speak("for real")
             speak("ealealealealealealealealealealealealealbruh")
+
+    if cmd == "web_search":
+        print(
+            "https://www.google.com/search?q={}".format(voice.split()[2:])
+        )
+    if cmd == "thanks":
+        os.startfile("C:\\Users\\SHLYAPA\\PycharmProjects\\SHLYAPA\\untitled.mp3")
 
 
 stop_listening = r.listen_in_background(m, callback)
