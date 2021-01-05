@@ -19,17 +19,16 @@ week_days = {
 def note():
     with open("notes.txt", "r") as file:
         try:
-            # text_for_print = ' '.join(str(file.read()).split()).replace('в', '')
-            text_for_print = str(file.read()).split().remove('в')
-            print(text_for_print)
-            # text = text_for_print.split()
-            text = text_for_print
-            lent = len(text)
-            time_for_note = text[lent - 1].replace(":", " ").split()
+            text_for_print = file.read()
+            splitted_tfp = text_for_print.split()
+            for i in splitted_tfp:
+                if i == 'в':
+                    splitted_tfp.remove(i)
+            lent = len(splitted_tfp)
+            time_for_note = splitted_tfp[lent - 1].replace(":", " ").split()
             hour_note = int(time_for_note[0])
             minute_note = int(time_for_note[1])
-            # day_note = datetime.datetime.now().isoweekday()
-            day_note = week_days[text[-2]]
+            day_note = splitted_tfp[-2]
             hour_now = datetime.datetime.now().hour
             minute_now = datetime.datetime.now().minute
             minute_now += hour_now * 60
@@ -40,13 +39,13 @@ def note():
             if day_now == day_note:
                 if time_diff >= 0:
                     print(
-                        f"У вас осталось {time_diff // 60} часов {time_diff % 60} минут до того, чтобы {''.join(text_for_print.split()[0])}"
+                        f"У вас осталось {time_diff // 60} часов {time_diff % 60} минут до того, чтобы {' '.join(splitted_tfp[:-2])}"
                     )
                 else:
                     print("Вы прошляпили свой план")
 
             else:
-                print(f"Вы планировали {''.join(text_for_print.split()[0])} в {text[-2]} в {note_time}")
+                print(f"Вы планировали {' '.join(splitted_tfp[:-2])} в {day_note} в {note_time}")
 
         except IndexError:
             pass
