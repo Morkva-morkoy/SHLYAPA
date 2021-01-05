@@ -37,7 +37,6 @@ opts = {
         "corona": ("коронавирус", "случаев короновируса"),
         "student": ("ddsadas", "работа студентом в этом есть прикол"),
         "web_search": ("найди", "dasdasd"),
-        "thanks": ("ты молодец", "dasojdhas"),
     },
 }
 
@@ -155,29 +154,8 @@ def execute_cmd(cmd, voice, countries, cities, days):
         print("{} рублей".format(convert[2].text))
         speak("{} рублей".format(convert[2].text))
     if cmd == "apps":
-        # voice_for_apps = voice.split()[2:]
-        # voice_for_apps = ' '.join(voice_for_apps)
-        # prefix_list = [
-        #     "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\",
-        #     "C:\\Users\\{}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\".format(user_name),
-        #     "C:\\Users\\{}\\Desktop\\".format(user_name),
-        # ]
-        # for i, prefix in enumerate(prefix_list):
-        #     path = os.path.join(prefix, voice_for_apps)
-        #     try:
-        #         os.startfile(path)
-        #     except FileNotFoundError:
-        #         if i == len(prefix_list) - 1:
-        #             print('incorrect app')
-        #         else:
-        #             continue
-        #     else:
-        #         break
-
         try:
-            voice_for_apps = voice.split()
-            voice_for_apps = voice_for_apps[2:]
-            voice_for_apps = " ".join(voice_for_apps)
+            voice_for_apps = ' '.join(voice.split()[2:])
             USER_NAME = getpass.getuser()
             os.startfile("C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\{}\\{}".format(
                 voice_for_apps, voice_for_apps))
@@ -257,18 +235,21 @@ def execute_cmd(cmd, voice, countries, cities, days):
         except KeyError:
             print("incorrect city")
     if cmd == "corona":
-        covid = Covid(source="worldometers")
-        action = covid.get_status_by_country_name(countries[voice.split()[-1]])
-        print(
-            "В {} {} новых случаев за сегодня".format(
-                voice.split()[-1], action["new_cases"]
+        try:
+            covid = Covid(source="worldometers")
+            action = covid.get_status_by_country_name(countries[voice.split()[-1]])
+            print(
+                "В {} {} новых случаев за сегодня".format(
+                    voice.split()[-1], action["new_cases"]
+                )
             )
-        )
-        speak(
-            "В {} {} новых случаев за сегодня".format(
-                voice.split()[-1], action["new_cases"]
+            speak(
+                "В {} {} новых случаев за сегодня".format(
+                    voice.split()[-1], action["new_cases"]
+                )
             )
-        )
+        except KeyError:
+            pass
     if cmd == "student":
         for i in range(5):
             speak("for real")
@@ -278,8 +259,6 @@ def execute_cmd(cmd, voice, countries, cities, days):
         print(
             "https://www.google.com/search?q={}".format(voice.split()[2:])
         )
-    if cmd == "thanks":
-        os.startfile("C:\\Users\\SHLYAPA\\PycharmProjects\\SHLYAPA\\untitled.mp3")
 
 
 stop_listening = r.listen_in_background(m, callback)
