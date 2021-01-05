@@ -12,23 +12,24 @@ week_days = {
     "четверг": 4,
     "пятницу": 5,
     "субботу": 6,
-    "воскресение": 7,
+    "воскресенье": 7,
 }
 
 
 def note():
     with open("notes.txt", "r") as file:
         try:
-            text_for_print = file.read()
-            text = text_for_print.split()
+            # text_for_print = ' '.join(str(file.read()).split()).replace('в', '')
+            text_for_print = str(file.read()).split().remove('в')
+            print(text_for_print)
+            # text = text_for_print.split()
+            text = text_for_print
             lent = len(text)
             time_for_note = text[lent - 1].replace(":", " ").split()
             hour_note = int(time_for_note[0])
             minute_note = int(time_for_note[1])
-            if text[-2] == "в":
-                day_note = datetime.datetime.now().isoweekday()
-            else:
-                day_note = week_days[text[-2]]
+            # day_note = datetime.datetime.now().isoweekday()
+            day_note = week_days[text[-2]]
             hour_now = datetime.datetime.now().hour
             minute_now = datetime.datetime.now().minute
             minute_now += hour_now * 60
@@ -39,23 +40,23 @@ def note():
             if day_now == day_note:
                 if time_diff >= 0:
                     print(
-                        f"У вас осталось {time_diff // 60} часов {time_diff % 60} минут до того, чтобы {text_for_print}"
+                        f"У вас осталось {time_diff // 60} часов {time_diff % 60} минут до того, чтобы {''.join(text_for_print.split()[0])}"
                     )
                 else:
                     print("Вы прошляпили свой план")
 
             else:
-                print(f"Вы планировали {text_for_print}")
+                print(f"Вы планировали {''.join(text_for_print.split()[0])} в {text[-2]} в {note_time}")
 
         except IndexError:
             pass
         except ValueError:
             pass
 
-        try:
-            return note_time
-        except UnboundLocalError:
-            print("У вас нет планов")
+    try:
+        return note_time
+    except UnboundLocalError:
+        print("У вас нет планов")
 
 
 def day_note():
