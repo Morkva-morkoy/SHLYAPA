@@ -22,6 +22,7 @@ opts = {
     "cmds": {
         "cdate": ("dakjds", "сегодня число"),
         "ctime": ("dasda", "сейчас времени"),
+        "web_search": ("найди", "найти"),
         "off": ("dadads", "компьютер"),
         "course_usd": ("курс доллара", "доллар в рублях"),
         "course_eur": ("курс евро", "евро в рублях"),
@@ -36,7 +37,8 @@ opts = {
         "humidity": ("влажность", "сейчас влажность"),
         "corona": ("коронавирус", "случаев короновируса"),
         "student": ("ddsadas", "работа студентом в этом есть прикол"),
-        "web_search": ("найди", "dasdasd"),
+
+        "thanks": ("ты молодец", "dasojdhas"),
     },
 }
 
@@ -95,17 +97,6 @@ def speak(what):
     engine.runAndWait()
 
 
-def recognize_cmd(cmd):
-    RC = {"cmd": "", "percent": 0}
-    for c, v in opts["cmds"].items():
-        for i in v:
-            vrt = fuzz.ratio(cmd, i)
-            if vrt > RC["percent"]:
-                RC["cmd"] = c
-                RC["percent"] = vrt
-    return RC
-
-
 def callback(recognizer, audio):
     try:
         voice = recognizer.recognize_google(audio, language="ru-RU").lower()
@@ -119,6 +110,17 @@ def callback(recognizer, audio):
         print("[log] Голос не распознан")
     except sr.RequestError:
         print("[log] Bruh")
+
+
+def recognize_cmd(cmd):
+    RC = {"cmd": "", "percent": 0}
+    for c, v in opts["cmds"].items():
+        for i in v:
+            vrt = fuzz.ratio(cmd, i)
+            if vrt > RC["percent"]:
+                RC["cmd"] = c
+                RC["percent"] = vrt
+    return RC
 
 
 with open("notes.txt", "r") as file:
@@ -145,17 +147,38 @@ def execute_cmd(cmd, voice, countries, cities, days):
 
     if cmd == "cdate":
         speak(str("Сейчас" + str(now.day) + "," + list_months[now.month]))
-    if cmd == "ctime":
+    elif cmd == "ctime":
         speak("Сейчас" + str(now.hour) + ":" + str(now.minute))
-    if cmd == "course_usd":
+    elif cmd == "course_usd":
         print("{} рублей".format(convert[0].text))
         speak("{} рублей".format(convert[0].text))
-    if cmd == "course_eur":
+    elif cmd == "course_eur":
         print("{} рублей".format(convert[2].text))
         speak("{} рублей".format(convert[2].text))
-    if cmd == "apps":
+    elif cmd == "apps":
+        # voice_for_apps = voice.split()[2:]
+        # voice_for_apps = ' '.join(voice_for_apps)
+        # prefix_list = [
+        #     "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\",
+        #     "C:\\Users\\{}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\".format(user_name),
+        #     "C:\\Users\\{}\\Desktop\\".format(user_name),
+        # ]
+        # for i, prefix in enumerate(prefix_list):
+        #     path = os.path.join(prefix, voice_for_apps)
+        #     try:
+        #         os.startfile(path)
+        #     except FileNotFoundError:
+        #         if i == len(prefix_list) - 1:
+        #             print('incorrect app')
+        #         else:
+        #             continue
+        #     else:
+        #         break
+
         try:
-            voice_for_apps = ' '.join(voice.split()[2:])
+            voice_for_apps = voice.split()
+            voice_for_apps = voice_for_apps[2:]
+            voice_for_apps = " ".join(voice_for_apps)
             USER_NAME = getpass.getuser()
             os.startfile("C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\{}\\{}".format(
                 voice_for_apps, voice_for_apps))
@@ -180,7 +203,7 @@ def execute_cmd(cmd, voice, countries, cities, days):
                     except FileNotFoundError:
                         print("incorrect app")
 
-    if cmd == "send":
+    elif cmd == "send":
         try:
             voice_for_vk = voice.split()
             voice_for_id = voice_for_vk[2]
@@ -190,75 +213,74 @@ def execute_cmd(cmd, voice, countries, cities, days):
             sent(voice_for_id, voice_for_message)
         except Exception:
             pass
-    if cmd == "note":
+    elif cmd == "note":
         voice = voice.split()
         voice_for_note = voice[3:]
         voice_for_note = " ".join(voice_for_note)
         with open("notes.txt", "w") as file:
             file.writelines(voice_for_note)
-    if cmd == "note1":
+    elif cmd == "note1":
         note()
-    if cmd == "off":
+    elif cmd == "off":
         check = str(input("Вы уверены что хотите завершить работу компьютера? "))
         if check == "да":
             os.system("shutdown /p")
         else:
             pass
-    if cmd == "temp":
+    elif cmd == "temp":
         try:
             print(get_weather(cities[voice.split()[-1]]).temperature("celsius")["temp"])
             speak(get_weather(cities[voice.split()[-1]]).temperature("celsius")["temp"])
         except KeyError:
             print("incorrect city")
-    if cmd == "sky":
+    elif cmd == "sky":
         try:
             print(get_weather(cities[voice.split()[-1]]).detailed_status)
             speak(get_weather(cities[voice.split()[-1]]).detailed_status)
         except KeyError:
             print("incorrect city")
-    if cmd == "wind":
+    elif cmd == "wind":
         try:
             print(get_weather(cities[voice.split()[-1]]).wind())
             speak(get_weather(cities[voice.split()[-1]]).wind())
         except KeyError:
             print("incorrect city")
-    if cmd == "if_rain":
+    elif cmd == "if_rain":
         try:
             print(get_weather(cities[voice.split()[-1]]).rain)
             speak(get_weather(cities[voice.split()[-1]]).rain)
         except KeyError:
             print("incorrect city")
-    if cmd == "humidity":
+    elif cmd == "humidity":
         try:
             print(get_weather(cities[voice.split()[-1]]).humidity)
             speak(get_weather(cities[voice.split()[-1]]).humidity)
         except KeyError:
             print("incorrect city")
-    if cmd == "corona":
-        try:
-            covid = Covid(source="worldometers")
-            action = covid.get_status_by_country_name(countries[voice.split()[-1]])
-            print(
-                "В {} {} новых случаев за сегодня".format(
-                    voice.split()[-1], action["new_cases"]
-                )
+    elif cmd == "corona":
+        covid = Covid(source="worldometers")
+        action = covid.get_status_by_country_name(countries[voice.split()[-1]])
+        print(
+            "В {} {} новых случаев за сегодня".format(
+                voice.split()[-1], action["new_cases"]
             )
-            speak(
-                "В {} {} новых случаев за сегодня".format(
-                    voice.split()[-1], action["new_cases"]
-                )
+        )
+        speak(
+            "В {} {} новых случаев за сегодня".format(
+                voice.split()[-1], action["new_cases"]
             )
-        except KeyError:
-            pass
-    if cmd == "student":
+        )
+    elif cmd == "student":
         for i in range(5):
             speak("for real")
             speak("ealealealealealealealealealealealealealbruh")
 
-    if cmd == "web_search":
+    elif cmd == 'web_search':
         print(
-            "https://www.google.com/search?q={}".format(voice.split()[2:])
-        )
+            "https://www.google.com/search?q={}".format(voice.split()[2:]))
+    else:
+        print(
+            "https://www.google.com/search?q={}".format(voice.split()[2:]))
 
 
 stop_listening = r.listen_in_background(m, callback)
