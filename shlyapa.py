@@ -258,10 +258,6 @@ def execute_cmd(cmd, voice, countries, cities, days):
                 voice.split()[-1], action["new_cases"]
             )
         )
-    elif cmd == "student":
-        for i in range(5):
-            speak("for real")
-            speak("ealealealealealealealealealealealealealbruh")
 
     elif cmd == 'web_search':
         webbrowser.open_new_tab(
