@@ -39,8 +39,6 @@ opts = {
     },
 }
 
-thresh = 70
-
 vk_names = {
     "dasd": 879796568,
     "роме": 617562550,
@@ -126,7 +124,7 @@ def recognize_cmd(cmd):
     for c, v in opts["cmds"].items():
         for i in v:
             vrt = fuzz.ratio(cmd, i)
-            if vrt > RC["percent"] > thresh:
+            if vrt > RC["percent"] > 40:
                 RC["cmd"] = c
                 RC["percent"] = vrt
     return RC
@@ -165,25 +163,6 @@ def execute_cmd(cmd, voice, countries, cities, days):
         print("{} рублей".format(convert[2].text))
         speak("{} рублей".format(convert[2].text))
     elif cmd == "apps":
-        # voice_for_apps = voice.split()[2:]
-        # voice_for_apps = ' '.join(voice_for_apps)
-        # prefix_list = [
-        #     "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\",
-        #     "C:\\Users\\{}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\".format(user_name),
-        #     "C:\\Users\\{}\\Desktop\\".format(user_name),
-        # ]
-        # for i, prefix in enumerate(prefix_list):
-        #     path = os.path.join(prefix, voice_for_apps)
-        #     try:
-        #         os.startfile(path)
-        #     except FileNotFoundError:
-        #         if i == len(prefix_list) - 1:
-        #             print('incorrect app')
-        #         else:
-        #             continue
-        #     else:
-        #         break
-
         try:
             voice_for_apps = voice.split()
             voice_for_apps = voice_for_apps[2:]
