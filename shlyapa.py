@@ -20,8 +20,8 @@ opts = {
     "names": ("шляпа", "шляпы", "шляпу"),
     "tbr": ("сколько", "какое", "блин", "выключи"),
     "cmds": {
-        "cdate": ("dakjds", "сегодня число"),
-        "ctime": ("dasda", "сейчас времени"),
+        "cdate": ("число", "сегодня число"),
+        "ctime": ("время", "сейчас времени"),
         "web_search": ("найди", "найти"),
         "off": ("dadads", "компьютер"),
         "course_usd": ("курс доллара", "доллар в рублях"),
@@ -36,11 +36,10 @@ opts = {
         "if_rain": ("дождь", "сейчас есть дождь"),
         "humidity": ("влажность", "сейчас влажность"),
         "corona": ("коронавирус", "случаев короновируса"),
-        "student": ("ddsadas", "работа студентом в этом есть прикол"),
-
-        "thanks": ("ты молодец", "dasojdhas"),
     },
 }
+
+thresh = 70
 
 vk_names = {
     "dasd": 879796568,
@@ -104,6 +103,8 @@ def callback(recognizer, audio):
         if voice.startswith(opts["names"]):
             cmd = voice
             cmd = recognize_cmd(cmd)
+            if not cmd:
+                return
             execute_cmd(cmd["cmd"], voice, counties, cities, days)
 
     except sr.UnknownValueError:
@@ -113,11 +114,19 @@ def callback(recognizer, audio):
 
 
 def recognize_cmd(cmd):
+    # for i in opts["tbr"]
+    words = cmd.split()
+    if len(words) < 2:
+        return
+    if words[1] in opts['tbr']:
+        cmd = ' '.join(words[2:])
+    else:
+        cmd = ' '.join(words[1:])
     RC = {"cmd": "", "percent": 0}
     for c, v in opts["cmds"].items():
         for i in v:
             vrt = fuzz.ratio(cmd, i)
-            if vrt > RC["percent"]:
+            if vrt > RC["percent"] > thresh:
                 RC["cmd"] = c
                 RC["percent"] = vrt
     return RC
@@ -276,11 +285,11 @@ def execute_cmd(cmd, voice, countries, cities, days):
             speak("ealealealealealealealealealealealealealbruh")
 
     elif cmd == 'web_search':
-        print(
-            "https://www.google.com/search?q={}".format(voice.split()[2:]))
+        webbrowser.open_new_tab(
+            "https://www.google.com/search?q={}".format(" ".join(voice.split()[2:])))
     else:
-        print(
-            "https://www.google.com/search?q={}".format(voice.split()[2:]))
+        webbrowser.open_new_tab(
+            "https://www.google.com/search?q={}".format(" ".join(voice.split()[1:])))
 
 
 stop_listening = r.listen_in_background(m, callback)
