@@ -112,15 +112,16 @@ def callback(recognizer, audio):
 
 
 def recognize_cmd(cmd):
-    # for i in opts["tbr"]
     words = cmd.split()
     if len(words) < 2:
         return
-    if words[1] in opts['tbr']:
-        cmd = ' '.join(words[2:])
-    else:
-        cmd = ' '.join(words[1:])
-    RC = {"cmd": "", "percent": 0}
+    for i in words:
+        if i in opts['tbr']:
+            words.remove(i)
+            cmd = ' '.join(words[1:])
+        else:
+            cmd = ' '.join(words[1:])
+    RC = {"cmd": "", "percent": 45}
     for c, v in opts["cmds"].items():
         for i in v:
             vrt = fuzz.ratio(cmd, i)
