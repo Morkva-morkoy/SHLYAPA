@@ -16,7 +16,9 @@ from pyowm.utils import timestamps
 from covid import Covid
 import getpass
 from translate import Translator
+import random
 import pyautogui as pg
+from sound import Sound
 
 opts = {
     "names": ("шляпа", "шляпы", "шляпу"),
@@ -37,10 +39,14 @@ opts = {
         "wind_speed": ("ветер", "скорость ветра"),
         "if_rain": ("дождь", "сейчас есть дождь"),
         "humidity": ("влажность", "сейчас влажность"),
+        "random": ("подкинь монетку", "подкинь монету"),
         "corona": ("коронавирус", "случаев короновируса"),
         "translate": ("переведи", "переведи слово", "перевод"),
         "print": ("напечатай", "печатай"),
-        "close": ("закрой", "закрыть")
+        "close": ("закрой", "закрыть"),
+        "sound": ("громкость на", "громкость"),
+        "sound_min": ("звук", "das"),
+        "sound_max": ("максимальная громкость", "dakjhd"),
     },
 }
 
@@ -121,11 +127,11 @@ def recognize_cmd(cmd):
     if len(words) < 2:
         return
     for i in words:
-        if i in opts['tbr']:
+        if i in opts["tbr"]:
             words.remove(i)
-            cmd = ' '.join(words[1:])
+            cmd = " ".join(words[1:])
         else:
-            cmd = ' '.join(words[1:])
+            cmd = " ".join(words[1:])
     RC = {"cmd": "", "percent": 45}
     for c, v in opts["cmds"].items():
         for i in v:
@@ -147,7 +153,7 @@ dollar_eur = "https://www.cbr.ru/"
 
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                  "Chrome/87.0.4280.66 Safari/537.36"
+    "Chrome/87.0.4280.66 Safari/537.36"
 }
 
 course_page = requests.get(dollar_eur, headers=headers)
@@ -174,8 +180,11 @@ def execute_cmd(cmd, voice, countries, cities, days):
             voice_for_apps = voice_for_apps[2:]
             voice_for_apps = " ".join(voice_for_apps)
             USER_NAME = getpass.getuser()
-            os.startfile("C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\{}\\{}".format(
-                voice_for_apps, voice_for_apps))
+            os.startfile(
+                "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\{}\\{}".format(
+                    voice_for_apps, voice_for_apps
+                )
+            )
 
         except FileNotFoundError:
             try:
@@ -183,16 +192,20 @@ def execute_cmd(cmd, voice, countries, cities, days):
                     "C:\\Users\\{}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\{}".format(
                         USER_NAME, voice_for_apps
                     )
-
                 )
             except FileNotFoundError:
                 try:
-                    os.startfile("C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\{}".format(
-                        voice_for_apps))
+                    os.startfile(
+                        "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\{}".format(
+                            voice_for_apps
+                        )
+                    )
                 except FileNotFoundError:
                     try:
                         os.startfile(
-                            "C:\\Users\\{}\\Desktop\\{}".format(USER_NAME, voice_for_apps)
+                            "C:\\Users\\{}\\Desktop\\{}".format(
+                                USER_NAME, voice_for_apps
+                            )
                         )
                     except FileNotFoundError:
                         print("incorrect app")
@@ -267,22 +280,44 @@ def execute_cmd(cmd, voice, countries, cities, days):
 
     elif cmd == "web_search":
         webbrowser.open_new_tab(
-            "https://www.google.com/search?q={}".format("+".join(voice.split()[2:])))
+            "https://www.google.com/search?q={}".format("+".join(voice.split()[2:]))
+        )
+
     elif cmd == "translate":
-        if Translator(to_lang='ru').translate(" ".join(voice.split()[2:])) == " ".join(voice.split()[2:]):
-            translator = Translator(from_lang='ru', to_lang='en')
+        if Translator(to_lang="ru").translate(" ".join(voice.split()[2:])) == " ".join(
+            voice.split()[2:]
+        ):
+            translator = Translator(from_lang="ru", to_lang="en")
         else:
-            translator = Translator(from_lang='en', to_lang='ru')
+            translator = Translator(from_lang="en", to_lang="ru")
         print(translator.translate(" ".join(voice.split()[2:])))
+
+    elif cmd == "random":
+        a = random.randint(1, 2)
+        if a == 1:
+            speak("Орёл")
+            print("Орёл")
+        else:
+            speak("Решка")
+            print("Решка")
+
     elif cmd == "print":
-        # text_for_write = str(voice)
-        # pg.typewrite(text_for_write, interval="0.1")
-        pg.typewrite('bruh', interval="0.1")
+        pg.write(" ".join(voice.split()[2:]), interval="0.01")
     elif cmd == "close":
-        pg.hotkey('alt', 'f4')
+        pg.hotkey("alt", "f4")
+
+    elif cmd == "sound":
+        Sound.volume_set(int(voice.split()[-1]))
+
+    elif cmd == "sound_min":
+        Sound.volume_min()
+
+    elif cmd == "sound_max":
+        Sound.volume_max()
     else:
         webbrowser.open_new_tab(
-            "https://www.google.com/search?q={}".format("+".join(voice.split()[1:])))
+            "https://www.google.com/search?q={}".format("+".join(voice.split()[1:]))
+        )
 
 
 stop_listening = r.listen_in_background(m, callback)
@@ -290,9 +325,9 @@ stop_listening = r.listen_in_background(m, callback)
 while True:
     time.sleep(0.1)
     time_now = (
-            f"{datetime.datetime.now().hour}:"
-            + list(f"0{datetime.datetime.now().minute}")[-2]
-            + list(f"0{datetime.datetime.now().minute}")[-1]
+        f"{datetime.datetime.now().hour}:"
+        + list(f"0{datetime.datetime.now().minute}")[-2]
+        + list(f"0{datetime.datetime.now().minute}")[-1]
     )
     try:
         day_note = day_note()
