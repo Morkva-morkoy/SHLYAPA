@@ -290,6 +290,7 @@ def execute_cmd(cmd, voice, countries, cities, days):
             translator = Translator(from_lang="ru", to_lang="en")
         else:
             translator = Translator(from_lang="en", to_lang="ru")
+        speak(translator.translate(" ".join(voice.split()[2:])))
         print(translator.translate(" ".join(voice.split()[2:])))
 
     elif cmd == "random":
@@ -309,6 +310,7 @@ def execute_cmd(cmd, voice, countries, cities, days):
     elif cmd == "sound":
         try:
             Sound.volume_set(int(voice.split()[-1]))
+            speak('Уровень громкости установлен на {} процентов'.format(int(voice.split()[-1])))
         except ValueError:
             print("Уровень громкости указан неверно")
 
