@@ -16,6 +16,7 @@ from pyowm.utils import timestamps
 from covid import Covid
 import getpass
 from translate import Translator
+import pyautogui as pg
 
 opts = {
     "names": ("шляпа", "шляпы", "шляпу"),
@@ -38,6 +39,8 @@ opts = {
         "humidity": ("влажность", "сейчас влажность"),
         "corona": ("коронавирус", "случаев короновируса"),
         "translate": ("переведи", "переведи слово", "перевод"),
+        "print": ("напечатай", "печатай"),
+        "close": ("закрой", "закрыть")
     },
 }
 
@@ -262,16 +265,21 @@ def execute_cmd(cmd, voice, countries, cities, days):
             )
         )
 
-    elif cmd == 'web_search':
+    elif cmd == "web_search":
         webbrowser.open_new_tab(
             "https://www.google.com/search?q={}".format("+".join(voice.split()[2:])))
-
     elif cmd == "translate":
         if Translator(to_lang='ru').translate(" ".join(voice.split()[2:])) == " ".join(voice.split()[2:]):
             translator = Translator(from_lang='ru', to_lang='en')
         else:
             translator = Translator(from_lang='en', to_lang='ru')
         print(translator.translate(" ".join(voice.split()[2:])))
+    elif cmd == "print":
+        # text_for_write = str(voice)
+        # pg.typewrite(text_for_write, interval="0.1")
+        pg.typewrite('bruh', interval="0.1")
+    elif cmd == "close":
+        pg.hotkey('alt', 'f4')
     else:
         webbrowser.open_new_tab(
             "https://www.google.com/search?q={}".format("+".join(voice.split()[1:])))
