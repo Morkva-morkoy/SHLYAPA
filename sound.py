@@ -1,7 +1,3 @@
-"""
-отредактировали модуль sound
-https://github.com/Paradoxis/Windows-Sound-Manager
-"""
 from keyboard import Keyboard
 
 
