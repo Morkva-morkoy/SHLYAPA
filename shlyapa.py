@@ -307,7 +307,10 @@ def execute_cmd(cmd, voice, countries, cities, days):
         pg.hotkey("alt", "f4")
 
     elif cmd == "sound":
-        Sound.volume_set(int(voice.split()[-1]))
+        try:
+            Sound.volume_set(int(voice.split()[-1]))
+        except ValueError:
+            print("Уровень громкости указан неверно")
 
     elif cmd == "sound_min":
         Sound.volume_min()
