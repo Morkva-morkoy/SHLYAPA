@@ -1,8 +1,3 @@
-"""
-отредактировали модуль sound
-https://github.com/Paradoxis/Windows-Sound-Manager
-"""
-
 import time
 import ctypes
 
