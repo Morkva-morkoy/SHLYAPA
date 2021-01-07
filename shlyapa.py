@@ -45,7 +45,7 @@ opts = {
         "print": ("напечатай", "печатай"),
         "close": ("закрой", "закрыть"),
         "sound": ("громкость на", "громкость"),
-        "sound_min": ("звук", "das"),
+        "sound_switch": ("звук", "das"),
         "sound_max": ("максимальная громкость", "dakjhd"),
     },
 }
@@ -290,8 +290,9 @@ def execute_cmd(cmd, voice, countries, cities, days):
             translator = Translator(from_lang="ru", to_lang="en")
         else:
             translator = Translator(from_lang="en", to_lang="ru")
-        speak(translator.translate(" ".join(voice.split()[2:])))
         print(translator.translate(" ".join(voice.split()[2:])))
+        speak(translator.translate(" ".join(voice.split()[2:])))
+        
 
     elif cmd == "random":
         a = random.randint(1, 2)
@@ -314,11 +315,15 @@ def execute_cmd(cmd, voice, countries, cities, days):
         except ValueError:
             print("Уровень громкости указан неверно")
 
-    elif cmd == "sound_min":
-        Sound.volume_min()
+    elif cmd == "sound_switch":
+        if Sound.current_volume() == 0:
+            Sound.volume_set(50)
+        else:
+            Sound.volume_min()
 
     elif cmd == "sound_max":
         Sound.volume_max()
+        speak("Уровень громкости установлен на 100 процентов")
     else:
         webbrowser.open_new_tab(
             "https://www.google.com/search?q={}".format("+".join(voice.split()[1:]))
