@@ -344,9 +344,13 @@ def execute_cmd(cmd, voice, countries, cities, days):
         html = get_html(wiki)
         a = get_content(html.text)
         texts = "".join(a.find_all(text=True))
-        print(texts)
-        speak(texts)
-        # webbrowser.open_new_tab(wiki)
+        stop_point = [".", ":"]
+        for i in list(texts):
+            if i in stop_point:
+                dot_index = list(texts).index(i)
+        print(dot_index)
+        print("".join(list(texts)[:dot_index]))
+        speak("".join(list(texts)[:dot_index]))
     else:
         webbrowser.open_new_tab(
             "https://www.google.com/search?q={}".format("+".join(voice.split()[1:]))
