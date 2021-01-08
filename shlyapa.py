@@ -22,7 +22,7 @@ from sound import Sound
 
 opts = {
     "names": ("шляпа", "шляпы", "шляпу"),
-    "tbr": ("сколько", "какое", "блин", "выключи"),
+    "tbr": ("сколько", "какое", "блин", "выключи", "слово", "слова"),
     "cmds": {
         "cdate": ("число", "сегодня число"),
         "ctime": ("время", "сейчас времени"),
@@ -47,6 +47,7 @@ opts = {
         "sound": ("громкость на", "громкость"),
         "sound_switch": ("звук", "das"),
         "sound_max": ("максимальная громкость", "dakjhd"),
+        "wiki": ("что такое", "значение", "что значит")
     },
 }
 
@@ -324,6 +325,28 @@ def execute_cmd(cmd, voice, countries, cities, days):
     elif cmd == "sound_max":
         Sound.volume_max()
         speak("Уровень громкости установлен на 100 процентов")
+    elif cmd == "wiki":
+        wiki = "https://ru.wikipedia.org/wiki/{}".format(" ".join(voice.split()[3:]))
+        HEADERS = {
+            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,'
+                      '/;q=0.8,application/signed-exchange;v=b3;q=0.9',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                          'Chrome/86.0.4240.198 Safari/537.36 OPR/72.0.3815.459'}
+
+        def get_html(url, params=''):
+            r = requests.get(url, headers=HEADERS, params=params)
+            return r
+
+        def get_content(html):
+            soup = BeautifulSoup(html, 'html.parser')
+            items = soup.find('p')
+            return items
+        html = get_html(wiki)
+        a = get_content(html.text)
+        texts = "".join(a.find_all(text=True))
+        print(texts)
+        speak(texts)
+        # webbrowser.open_new_tab(wiki)
     else:
         webbrowser.open_new_tab(
             "https://www.google.com/search?q={}".format("+".join(voice.split()[1:]))
