@@ -266,18 +266,21 @@ def execute_cmd(cmd, voice, countries, cities, days):
         except KeyError:
             print("incorrect city")
     elif cmd == "corona":
-        covid = Covid(source="worldometers")
-        action = covid.get_status_by_country_name(countries[voice.split()[-1]])
-        print(
-            "В {} {} новых случаев за сегодня".format(
-                voice.split()[-1], action["new_cases"]
+        try:
+            covid = Covid(source="worldometers")
+            action = covid.get_status_by_country_name(countries[voice.split()[-1]])
+            print(
+                "В {} {} новых случаев за сегодня".format(
+                    voice.split()[-1], action["new_cases"]
+                )
             )
-        )
-        speak(
-            "В {} {} новых случаев за сегодня".format(
-                voice.split()[-1], action["new_cases"]
+            speak(
+                "В {} {} новых случаев за сегодня".format(
+                    voice.split()[-1], action["new_cases"]
+                )
             )
-        )
+        except KeyError:
+            pass
 
     elif cmd == "web_search":
         webbrowser.open_new_tab(
@@ -326,31 +329,34 @@ def execute_cmd(cmd, voice, countries, cities, days):
         Sound.volume_max()
         speak("Уровень громкости установлен на 100 процентов")
     elif cmd == "wiki":
-        wiki = "https://ru.wikipedia.org/wiki/{}".format(" ".join(voice.split()[3:]))
-        HEADERS = {
-            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,'
-                      '/;q=0.8,application/signed-exchange;v=b3;q=0.9',
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
-                          'Chrome/86.0.4240.198 Safari/537.36 OPR/72.0.3815.459'}
+        try:
+            wiki = "https://ru.wikipedia.org/wiki/{}".format("_".join(voice.split()[3:]))
+            HEADERS = {
+                'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,'
+                          '/;q=0.8,application/signed-exchange;v=b3;q=0.9',
+                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                              'Chrome/86.0.4240.198 Safari/537.36 OPR/72.0.3815.459'}
 
-        def get_html(url, params=''):
-            r = requests.get(url, headers=HEADERS, params=params)
-            return r
+            def get_html(url, params=''):
+                r = requests.get(url, headers=HEADERS, params=params)
+                return r
 
-        def get_content(html):
-            soup = BeautifulSoup(html, 'html.parser')
-            items = soup.find('p')
-            return items
-        html = get_html(wiki)
-        a = get_content(html.text)
-        texts = "".join(a.find_all(text=True))
-        stop_point = [".", ":"]
-        for i in list(texts):
-            if i in stop_point:
-                dot_index = list(texts).index(i)
-        print(dot_index)
-        print("".join(list(texts)[:dot_index]))
-        speak("".join(list(texts)[:dot_index]))
+            def get_content(html):
+                soup = BeautifulSoup(html, 'html.parser')
+                items = soup.find('p')
+                return items
+            html = get_html(wiki)
+            a = get_content(html.text)
+            texts = "".join(a.find_all(text=True))
+            stop_point = [".", ":"]
+            for i in list(texts):
+                if i in stop_point:
+                    dot_index = list(texts).index(i)
+            print("".join(list(texts)[:dot_index]))
+            speak("".join(list(texts)[:dot_index]))
+        except UnboundLocalError:
+            print(texts)
+            speak(texts)
     else:
         webbrowser.open_new_tab(
             "https://www.google.com/search?q={}".format("+".join(voice.split()[1:]))
