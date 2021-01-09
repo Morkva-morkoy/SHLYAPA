@@ -343,7 +343,7 @@ def execute_cmd(cmd, voice, countries, cities, days):
 
             def get_content(html):
                 soup = BeautifulSoup(html, 'html.parser')
-                items = soup.find('p')
+                items = soup.find('div', class_='mw-parser-output').find('p')
                 return items
             html = get_html(wiki)
             a = get_content(html.text)
@@ -352,8 +352,11 @@ def execute_cmd(cmd, voice, countries, cities, days):
             for i in list(texts):
                 if i in stop_point:
                     dot_index = list(texts).index(i)
-            print("".join(list(texts)[:dot_index]))
-            speak("".join(list(texts)[:dot_index]))
+            if len(texts.split()) == 1:
+                print("Bruh")
+            else:
+                print(texts)
+                speak("".join(list(texts)[:dot_index]))
         except UnboundLocalError:
             print(texts)
             speak(texts)
