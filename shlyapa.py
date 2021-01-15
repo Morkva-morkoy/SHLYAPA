@@ -22,7 +22,7 @@ from sound import Sound
 
 opts = {
     "names": ("шляпа", "шляпы", "шляпу"),
-    "tbr": ("сколько", "какое", "блин", "выключи", "слово", "слова"),
+    "tbr": ("сколько", "какое", "блин", "выключи", "слово", "слова", "мне"),
     "cmds": {
         "cdate": ("число", "сегодня число"),
         "ctime": ("время", "сейчас времени"),
@@ -32,7 +32,7 @@ opts = {
         "course_eur": ("курс евро", "евро в рублях"),
         "apps": ("открой", "запусти"),
         "send": ("отправь", "сообщение"),
-        "note": ("напомни", "напомни мне"),
+        "note": ("напомни", "dasdasd"),
         "note1": ("мои планы", "планы"),
         "temp": ("температура", "сейчас температура"),
         "sky": ("осадки", "сейчас осадки"),
@@ -107,15 +107,24 @@ def speak(what):
 
 
 def callback(recognizer, audio):
-    try:
+    try:    
         voice = recognizer.recognize_google(audio, language="ru-RU").lower()
         print("[log] Распознано: " + voice)
-        if voice.startswith(opts["names"]):
-            cmd = voice
-            cmd = recognize_cmd(cmd)
-            if not cmd:
-                return
-            execute_cmd(cmd["cmd"], voice, counties, cities, days)
+        for i in opts["names"]:
+            if i in voice:
+                name_index = voice.split().index(i)
+                voice_split = voice.split()
+                trash_list = voice_split[:name_index]
+                for j in trash_list:
+                    if j in voice_split:
+                        voice_split.remove(j)
+                voice_split.remove(voice_split[0])
+                voice = ' '.join(voice_split)
+                cmd = voice
+                cmd = recognize_cmd(cmd)
+                if not cmd:
+                    return
+                execute_cmd(cmd["cmd"], voice, counties, cities, days)
 
     except sr.UnknownValueError:
         print("[log] Голос не распознан")
@@ -124,20 +133,40 @@ def callback(recognizer, audio):
 
 
 def recognize_cmd(cmd):
+    # words = cmd.split()
+    # if len(words) < 1:
+    #     return
+    # for i in words:
+    #     if i in opts["tbr"]:
+    #         words.remove(i)
+    #         cmd = " ".join(words)
+    #     else:
+    #         cmd = " ".join(words)
+    # RC = {"cmd": "", "percent": 45}
+    # for c, v in opts["cmds"].items():
+    #     for i in v:
+    #         vrt = fuzz.ratio(cmd, i)
+    #         if vrt > RC["percent"] > 40:
+    #             RC["cmd"] = c
+    #             RC["percent"] = vrt
+    # return RC
     words = cmd.split()
-    if len(words) < 2:
+    if len(words) < 1:
         return
     for i in words:
         if i in opts["tbr"]:
             words.remove(i)
-            cmd = " ".join(words[1:])
+            cmd = " ".join(words)
         else:
-            cmd = " ".join(words[1:])
-    RC = {"cmd": "", "percent": 45}
+            cmd = " ".join(words)
+    RC = {"cmd": "", "percent": 65}
     for c, v in opts["cmds"].items():
         for i in v:
+            if i in words:
+                cmd = i
+        for i in v:
             vrt = fuzz.ratio(cmd, i)
-            if vrt > RC["percent"] > 40:
+            if vrt > RC["percent"] > 60:
                 RC["cmd"] = c
                 RC["percent"] = vrt
     return RC
@@ -170,15 +199,15 @@ def execute_cmd(cmd, voice, countries, cities, days):
     elif cmd == "ctime":
         speak("Сейчас" + str(now.hour) + ":" + str(now.minute))
     elif cmd == "course_usd":
-        print("{} рублей".format(convert[0].text))
-        speak("{} рублей".format(convert[0].text))
+        print("{} рублей".format(" ".join(convert[0].text.split())))
+        speak("{} рублей".format(" ".join(convert[0].text.split())))
     elif cmd == "course_eur":
-        print("{} рублей".format(convert[2].text))
-        speak("{} рублей".format(convert[2].text))
+        print("{} рублей".format(" ".join(convert[2].text.split())))
+        speak("{} рублей".format(" ".join(convert[2].text.split())))
     elif cmd == "apps":
         try:
             voice_for_apps = voice.split()
-            voice_for_apps = voice_for_apps[2:]
+            voice_for_apps = voice_for_apps[1:]
             voice_for_apps = " ".join(voice_for_apps)
             USER_NAME = getpass.getuser()
             os.startfile(
@@ -186,6 +215,7 @@ def execute_cmd(cmd, voice, countries, cities, days):
                     voice_for_apps, voice_for_apps
                 )
             )
+            speak(f"Открываю {voice_for_apps}")
 
         except FileNotFoundError:
             try:
@@ -194,6 +224,7 @@ def execute_cmd(cmd, voice, countries, cities, days):
                         USER_NAME, voice_for_apps
                     )
                 )
+                speak(f"Открываю {voice_for_apps}")
             except FileNotFoundError:
                 try:
                     os.startfile(
@@ -201,6 +232,7 @@ def execute_cmd(cmd, voice, countries, cities, days):
                             voice_for_apps
                         )
                     )
+                    speak(f"Открываю {voice_for_apps}")
                 except FileNotFoundError:
                     try:
                         os.startfile(
@@ -208,6 +240,7 @@ def execute_cmd(cmd, voice, countries, cities, days):
                                 USER_NAME, voice_for_apps
                             )
                         )
+                        speak(f"Открываю {voice_for_apps}")
                     except FileNotFoundError:
                         print("incorrect app")
 
@@ -223,7 +256,13 @@ def execute_cmd(cmd, voice, countries, cities, days):
             pass
     elif cmd == "note":
         voice = voice.split()
-        voice_for_note = voice[3:]
+        for i in voice:
+            if i in opts["tbr"]:
+                voice.remove(i)
+            for j in opts['cmds'].values():
+                if i in j:
+                    cmd_index = voice.index(i)
+        voice_for_note = voice[cmd_index+1:]
         voice_for_note = " ".join(voice_for_note)
         with open("notes.txt", "w") as file:
             file.writelines(voice_for_note)
@@ -288,14 +327,14 @@ def execute_cmd(cmd, voice, countries, cities, days):
         )
 
     elif cmd == "translate":
-        if Translator(to_lang="ru").translate(" ".join(voice.split()[2:])) == " ".join(
-            voice.split()[2:]
+        if Translator(to_lang="ru").translate(" ".join(voice.split()[1:])) == " ".join(
+            voice.split()[1:]
         ):
             translator = Translator(from_lang="ru", to_lang="en")
         else:
             translator = Translator(from_lang="en", to_lang="ru")
-        print(translator.translate(" ".join(voice.split()[2:])))
-        speak(translator.translate(" ".join(voice.split()[2:])))
+        print(translator.translate(" ".join(voice.split()[1:])))
+        speak(translator.translate(" ".join(voice.split()[1:])))
         
 
     elif cmd == "random":
@@ -330,7 +369,7 @@ def execute_cmd(cmd, voice, countries, cities, days):
         speak("Уровень громкости установлен на 100 процентов")
     elif cmd == "wiki":
         try:
-            wiki = "https://ru.wikipedia.org/wiki/{}".format("_".join(voice.split()[3:]))
+            wiki = "https://ru.wikipedia.org/wiki/{}".format("_".join(voice.split()[2:]))
             HEADERS = {
                 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,'
                           '/;q=0.8,application/signed-exchange;v=b3;q=0.9',
@@ -342,24 +381,41 @@ def execute_cmd(cmd, voice, countries, cities, days):
                 return r
 
             def get_content(html):
-                soup = BeautifulSoup(html, 'html.parser')
-                items = soup.find('div', class_='mw-parser-output').find('p')
-                return items
-            html = get_html(wiki)
-            a = get_content(html.text)
-            texts = "".join(a.find_all(text=True))
-            stop_point = [".", ":"]
+                try:
+                    soup = BeautifulSoup(html, 'html.parser')
+                    items = soup.find('div', class_='mw-parser-output').find('p')
+                    return items
+                except AttributeError:
+                    print("can`t get page content, try again")
+            try:
+                html = get_html(wiki)
+                a = get_content(html.text)
+                texts = "".join(a.find_all(text=True))
+                stop_point = [".", ":"]
+            except AttributeError:
+                pass
             for i in list(texts):
                 if i in stop_point:
-                    dot_index = list(texts).index(i)
+                    # dot_index = list(texts).index(i)
+                    a = len(texts.split()[:list(texts).index(i)])
+                    if len(texts.split()[:list(texts).index(i)]) < 25:
+                        try:
+                            dot_index = [i for i, n in enumerate(list(texts)) if n in ['.', ':']][2]
+                        except IndexError:
+                            try:
+                                dot_index = [i for i, n in enumerate(list(texts)) if n in ['.', ':']][1]
+                            except IndexError:
+                                dot_index = [i for i, n in enumerate(list(texts)) if n in ['.', ':']][0]
+                    else:
+                        dot_index = [i for i, n in enumerate(list(texts)) if n in ['.', ':']][0]
             if len(texts.split()) == 1:
                 print("Bruh")
             else:
                 print(texts)
                 speak("".join(list(texts)[:dot_index]))
+                # speak(texts)
         except UnboundLocalError:
-            print(texts)
-            speak(texts)
+            pass
     else:
         webbrowser.open_new_tab(
             "https://www.google.com/search?q={}".format("+".join(voice.split()[1:]))
