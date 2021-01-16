@@ -1,3 +1,32 @@
+"""
+отредактировали модуль sound
+https://github.com/Paradoxis/Windows-Sound-Manager
+"""
+
+"""
+The MIT License (MIT)
+
+Copyright (c) 2016 Paradoxis
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
 import time
 import ctypes
 
@@ -12,7 +41,7 @@ class KeyBdInput(ctypes.Structure):
         ("wScan", ctypes.c_ushort),
         ("dwFlags", ctypes.c_ulong),
         ("time", ctypes.c_ulong),
-        ("dwExtraInfo", PUL)
+        ("dwExtraInfo", PUL),
     ]
 
 
@@ -20,7 +49,7 @@ class HardwareInput(ctypes.Structure):
     _fields_ = [
         ("uMsg", ctypes.c_ulong),
         ("wParamL", ctypes.c_short),
-        ("wParamH", ctypes.c_ushort)
+        ("wParamH", ctypes.c_ushort),
     ]
 
 
@@ -31,23 +60,16 @@ class MouseInput(ctypes.Structure):
         ("mouseData", ctypes.c_ulong),
         ("dwFlags", ctypes.c_ulong),
         ("time", ctypes.c_ulong),
-        ("dwExtraInfo", PUL)
+        ("dwExtraInfo", PUL),
     ]
 
 
 class Input_I(ctypes.Union):
-    _fields_ = [
-        ("ki", KeyBdInput),
-        ("mi", MouseInput),
-        ("hi", HardwareInput)
-    ]
+    _fields_ = [("ki", KeyBdInput), ("mi", MouseInput), ("hi", HardwareInput)]
 
 
 class Input(ctypes.Structure):
-    _fields_ = [
-        ("type", ctypes.c_ulong),
-        ("ii", Input_I)
-    ]
+    _fields_ = [("type", ctypes.c_ulong), ("ii", Input_I)]
 
 
 class Keyboard:
