@@ -47,18 +47,12 @@ opts = {
         "sound": ("громкость на", "громкость"),
         "sound_switch": ("звук", "das"),
         "sound_max": ("максимальная громкость", "dakjhd"),
-        "wiki": ("что такое", "значение", "что значит")
+        "wiki": ("что такое", "значение", "что значит"),
     },
 }
 
 vk_names = {
-    "dasd": 879796568,
-    "роме": 617562550,
-    "мне": 350291456,
-    "духи": 310799106,
-    "витя": 429372253,
-    "вове": 97233590,
-    "арсению": 526584669,
+    #"ИМЯ": ID
 }
 list_months = [
     "bruh",
@@ -101,17 +95,9 @@ with m as source:
 
 
 def speak(what):
-    tts = pyttsx3.init()
-    voices = tts.getProperty('voices')
-
-    # Задать голос по умолчанию
-    tts.setProperty('voice', 'ru')
-
-    # Попробовать установить предпочтительный голос
-    for voice in voices:
-        tts.setProperty('voice', voice.id)
-    tts.say(what)
-    tts.runAndWait()
+    engine = pyttsx3.init()
+    engine.say(what)
+    engine.runAndWait()
 
 
 def callback(recognizer, audio):
@@ -127,7 +113,7 @@ def callback(recognizer, audio):
                     if j in voice_split:
                         voice_split.remove(j)
                 voice_split.remove(voice_split[0])
-                voice = ' '.join(voice_split)
+                voice = " ".join(voice_split)
                 cmd = voice
                 cmd = recognize_cmd(cmd)
                 if not cmd:
@@ -141,23 +127,6 @@ def callback(recognizer, audio):
 
 
 def recognize_cmd(cmd):
-    # words = cmd.split()
-    # if len(words) < 1:
-    #     return
-    # for i in words:
-    #     if i in opts["tbr"]:
-    #         words.remove(i)
-    #         cmd = " ".join(words)
-    #     else:
-    #         cmd = " ".join(words)
-    # RC = {"cmd": "", "percent": 45}
-    # for c, v in opts["cmds"].items():
-    #     for i in v:
-    #         vrt = fuzz.ratio(cmd, i)
-    #         if vrt > RC["percent"] > 40:
-    #             RC["cmd"] = c
-    #             RC["percent"] = vrt
-    # return RC
     words = cmd.split()
     if len(words) < 1:
         return
@@ -191,7 +160,7 @@ dollar_eur = "https://www.cbr.ru/"
 
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                  "Chrome/87.0.4280.66 Safari/537.36"
+    "Chrome/87.0.4280.66 Safari/537.36"
 }
 
 course_page = requests.get(dollar_eur, headers=headers)
@@ -255,9 +224,9 @@ def execute_cmd(cmd, voice, countries, cities, days):
     elif cmd == "send":
         try:
             voice_for_vk = voice.split()
-            voice_for_id = voice_for_vk[1]
+            voice_for_id = voice_for_vk[2]
             voice_for_id = vk_names[voice_for_id]
-            voice_for_message = voice_for_vk[2:]
+            voice_for_message = voice_for_vk[3:]
             voice_for_message = " ".join(voice_for_message)
             sent(voice_for_id, voice_for_message)
         except Exception:
@@ -267,10 +236,10 @@ def execute_cmd(cmd, voice, countries, cities, days):
         for i in voice:
             if i in opts["tbr"]:
                 voice.remove(i)
-            for j in opts['cmds'].values():
+            for j in opts["cmds"].values():
                 if i in j:
                     cmd_index = voice.index(i)
-        voice_for_note = voice[cmd_index + 1:]
+        voice_for_note = voice[cmd_index + 1 :]
         voice_for_note = " ".join(voice_for_note)
         with open("notes.txt", "w") as file:
             file.writelines(voice_for_note)
@@ -288,40 +257,30 @@ def execute_cmd(cmd, voice, countries, cities, days):
             speak(get_weather(cities[voice.split()[-1]]).temperature("celsius")["temp"])
         except KeyError:
             print("incorrect city")
-        except TimeoutError:
-            print('api request has timed out')
     elif cmd == "sky":
         try:
             print(get_weather(cities[voice.split()[-1]]).detailed_status)
             speak(get_weather(cities[voice.split()[-1]]).detailed_status)
         except KeyError:
             print("incorrect city")
-        except TimeoutError:
-            print('api request has timed out')
     elif cmd == "wind":
         try:
             print(get_weather(cities[voice.split()[-1]]).wind())
             speak(get_weather(cities[voice.split()[-1]]).wind())
         except KeyError:
             print("incorrect city")
-        except TimeoutError:
-            print('api request has timed out')
     elif cmd == "if_rain":
         try:
             print(get_weather(cities[voice.split()[-1]]).rain)
             speak(get_weather(cities[voice.split()[-1]]).rain)
         except KeyError:
             print("incorrect city")
-        except TimeoutError:
-            print('api request has timed out')
     elif cmd == "humidity":
         try:
             print(get_weather(cities[voice.split()[-1]]).humidity)
             speak(get_weather(cities[voice.split()[-1]]).humidity)
         except KeyError:
             print("incorrect city")
-        except TimeoutError:
-            print('api request has timed out')
     elif cmd == "corona":
         try:
             covid = Covid(source="worldometers")
@@ -341,19 +300,18 @@ def execute_cmd(cmd, voice, countries, cities, days):
 
     elif cmd == "web_search":
         webbrowser.open_new_tab(
-            "https://www.google.com/search?q={}".format("+".join(voice.split()[1:]))
+            "https://www.google.com/search?q={}".format("+".join(voice.split()[2:]))
         )
 
     elif cmd == "translate":
         if Translator(to_lang="ru").translate(" ".join(voice.split()[1:])) == " ".join(
-                voice.split()[1:]
+            voice.split()[1:]
         ):
             translator = Translator(from_lang="ru", to_lang="en")
         else:
             translator = Translator(from_lang="en", to_lang="ru")
         print(translator.translate(" ".join(voice.split()[1:])))
         speak(translator.translate(" ".join(voice.split()[1:])))
-
 
     elif cmd == "random":
         a = random.randint(1, 2)
@@ -365,14 +323,18 @@ def execute_cmd(cmd, voice, countries, cities, days):
             print("Решка")
 
     elif cmd == "print":
-        pg.write(" ".join(voice.split()[1:]), interval="0.01")
+        pg.write(" ".join(voice.split()[2:]), interval="0.01")
     elif cmd == "close":
         pg.hotkey("alt", "f4")
 
     elif cmd == "sound":
         try:
             Sound.volume_set(int(voice.split()[-1]))
-            speak('Уровень громкости установлен на {} процентов'.format(int(voice.split()[-1])))
+            speak(
+                "Уровень громкости установлен на {} процентов".format(
+                    int(voice.split()[-1])
+                )
+            )
         except ValueError:
             print("Уровень громкости указан неверно")
 
@@ -387,21 +349,24 @@ def execute_cmd(cmd, voice, countries, cities, days):
         speak("Уровень громкости установлен на 100 процентов")
     elif cmd == "wiki":
         try:
-            wiki = "https://ru.wikipedia.org/wiki/{}".format("_".join(voice.split()[2:]))
+            wiki = "https://ru.wikipedia.org/wiki/{}".format(
+                "_".join(voice.split()[2:])
+            )
             HEADERS = {
-                'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,'
-                          '/;q=0.8,application/signed-exchange;v=b3;q=0.9',
-                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
-                              'Chrome/86.0.4240.198 Safari/537.36 OPR/72.0.3815.459'}
+                "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,"
+                "/;q=0.8,application/signed-exchange;v=b3;q=0.9",
+                "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/86.0.4240.198 Safari/537.36 OPR/72.0.3815.459",
+            }
 
-            def get_html(url, params=''):
+            def get_html(url, params=""):
                 r = requests.get(url, headers=HEADERS, params=params)
                 return r
 
             def get_content(html):
                 try:
-                    soup = BeautifulSoup(html, 'html.parser')
-                    items = soup.find('div', class_='mw-parser-output').find('p')
+                    soup = BeautifulSoup(html, "html.parser")
+                    items = soup.find("div", class_="mw-parser-output").find("p")
                     return items
                 except AttributeError:
                     print("can`t get page content, try again")
@@ -415,24 +380,34 @@ def execute_cmd(cmd, voice, countries, cities, days):
                 pass
             for i in list(texts):
                 if i in stop_point:
-                    # dot_index = list(texts).index(i)
-                    a = len(texts.split()[:list(texts).index(i)])
-                    if len(texts.split()[:list(texts).index(i)]) < 25:
+                    a = len(texts.split()[: list(texts).index(i)])
+                    if len(texts.split()[: list(texts).index(i)]) < 25:
                         try:
-                            dot_index = [i for i, n in enumerate(list(texts)) if n in ['.', ':']][2]
+                            dot_index = [
+                                i for i, n in enumerate(list(texts)) if n in [".", ":"]
+                            ][2]
                         except IndexError:
                             try:
-                                dot_index = [i for i, n in enumerate(list(texts)) if n in ['.', ':']][1]
+                                dot_index = [
+                                    i
+                                    for i, n in enumerate(list(texts))
+                                    if n in [".", ":"]
+                                ][1]
                             except IndexError:
-                                dot_index = [i for i, n in enumerate(list(texts)) if n in ['.', ':']][0]
+                                dot_index = [
+                                    i
+                                    for i, n in enumerate(list(texts))
+                                    if n in [".", ":"]
+                                ][0]
                     else:
-                        dot_index = [i for i, n in enumerate(list(texts)) if n in ['.', ':']][0]
+                        dot_index = [
+                            i for i, n in enumerate(list(texts)) if n in [".", ":"]
+                        ][0]
             if len(texts.split()) == 1:
                 print("Bruh")
             else:
                 print(texts)
                 speak("".join(list(texts)[:dot_index]))
-                # speak(texts)
         except UnboundLocalError:
             pass
     else:
@@ -446,9 +421,9 @@ stop_listening = r.listen_in_background(m, callback)
 while True:
     time.sleep(0.1)
     time_now = (
-            f"{datetime.datetime.now().hour}:"
-            + list(f"0{datetime.datetime.now().minute}")[-2]
-            + list(f"0{datetime.datetime.now().minute}")[-1]
+        f"{datetime.datetime.now().hour}:"
+        + list(f"0{datetime.datetime.now().minute}")[-2]
+        + list(f"0{datetime.datetime.now().minute}")[-1]
     )
     try:
         day_note = day_note()
