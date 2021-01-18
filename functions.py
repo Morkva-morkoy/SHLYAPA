@@ -22,7 +22,7 @@ def note():
             text_for_print = file.read()
             splitted_tfp = text_for_print.split()
             for i in splitted_tfp:
-                if i in ['в', 'во']:
+                if i in ["в", "во"]:
                     splitted_tfp.remove(i)
             lent = len(splitted_tfp)
             time_for_note = splitted_tfp[lent - 1].replace(":", " ").split()
@@ -31,7 +31,7 @@ def note():
             if splitted_tfp[-2] in week_days:
                 day_note = " в " + splitted_tfp[-2]
             else:
-                day_note = ''
+                day_note = ""
             hour_now = datetime.datetime.now().hour
             minute_now = datetime.datetime.now().minute
             minute_now += hour_now * 60
@@ -48,7 +48,9 @@ def note():
                     print("Вы прошляпили свой план")
 
             else:
-                print(f"Вы планировали {' '.join(splitted_tfp[:-1])}{day_note} в {note_time}")
+                print(
+                    f"Вы планировали {' '.join(splitted_tfp[:-1])}{day_note} в {note_time}"
+                )
 
         except IndexError:
             pass
