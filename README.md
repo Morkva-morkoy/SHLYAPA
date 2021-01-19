@@ -23,3 +23,37 @@
  11. Закрытие программ
  12. Изменение громкости
  13. Wiki
+
+
+
+
+
+
+
+Необходимые модули/библиотеки:
+pywin32
+pypiwin32
+pyaudio
+speech_recognition
+pyttsx3
+fuzzywuzzy
+requests
+bs4
+vk_api
+pyowm
+covid
+translate
+pyautogui
+
+VK Access Token:
+1. Перейти по ссылке: https://vkhost.github.io
+2. Выбрать Kate Mobile
+3. Разрешить доступ к аккаунту
+4. Скопировать токен(https://oauth.vk.com/blank.html#access_token=СКОПИРОВАТЬn=0&user_id=ВАШ_ID)
+5. Вставить в файл vk_token.txt
+
+OWM Token:
+1. Перейти по ссылке
+2. Зарегистрироваться
+3. Получить токен
+4. вставить в файл owm_token.txt
