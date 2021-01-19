@@ -31,18 +31,18 @@
 
 
 Необходимые модули/библиотеки:
-pywin32
-pypiwin32
-pyaudio
-speech_recognition
-pyttsx3
-fuzzywuzzy
-requests
-bs4
-vk_api
-pyowm
-covid
-translate
+pywin32,
+pypiwin32,
+pyaudio,
+speech_recognition,
+pyttsx3,
+fuzzywuzzy,
+requests,
+bs4,
+vk_api,
+pyowm,
+covid,
+translate,
 pyautogui
 
 VK Access Token:
