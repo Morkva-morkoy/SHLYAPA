@@ -13,11 +13,12 @@ import vk_api
 from pyowm import OWM
 from pyowm.utils import config
 from pyowm.utils import timestamps
-from covid import Covid
+# from covid import Covid
 import getpass
-from translate import Translator
+# from translate import Translator
+from googletrans import Translator
 import random
-import pyautogui as pg
+# import pyautogui as pg
 from sound import Sound
 
 opts = {
@@ -46,7 +47,7 @@ opts = {
         "close": ("закрой", "закрыть"),
         "sound": ("громкость на", "громкость"),
         "sound_switch": ("звук", "das"),
-        "sound_max": ("максимальная громкость", "dakjhd"),
+        "sound_max": ("максимальная", "dakjhd"),
         "wiki": ("что такое", "значение", "что значит"),
     },
 }
@@ -281,22 +282,22 @@ def execute_cmd(cmd, voice, countries, cities, days):
             speak(get_weather(cities[voice.split()[-1]]).humidity)
         except KeyError:
             print("incorrect city")
-    elif cmd == "corona":
-        try:
-            covid = Covid(source="worldometers")
-            action = covid.get_status_by_country_name(countries[voice.split()[-1]])
-            print(
-                "В {} {} новых случаев за сегодня".format(
-                    voice.split()[-1], action["new_cases"]
-                )
-            )
-            speak(
-                "В {} {} новых случаев за сегодня".format(
-                    voice.split()[-1], action["new_cases"]
-                )
-            )
-        except KeyError:
-            pass
+    # elif cmd == "corona":
+    #     try:
+    #         covid = Covid(source="worldometers")
+    #         action = covid.get_status_by_country_name(countries[voice.split()[-1]])
+    #         print(
+    #             "В {} {} новых случаев за сегодня".format(
+    #                 voice.split()[-1], action["new_cases"]
+    #             )
+    #         )
+    #         speak(
+    #             "В {} {} новых случаев за сегодня".format(
+    #                 voice.split()[-1], action["new_cases"]
+    #             )
+    #         )
+    #     except KeyError:
+    #         pass
 
     elif cmd == "web_search":
         webbrowser.open_new_tab(
@@ -304,12 +305,12 @@ def execute_cmd(cmd, voice, countries, cities, days):
         )
 
     elif cmd == "translate":
-        if Translator(to_lang="ru").translate(" ".join(voice.split()[1:])) == " ".join(
+        if Translator(dest="ru").translate(" ".join(voice.split()[1:])) == " ".join(
             voice.split()[1:]
         ):
-            translator = Translator(from_lang="ru", to_lang="en")
+            translator = Translator(src="ru", dest="en")
         else:
-            translator = Translator(from_lang="en", to_lang="ru")
+            translator = Translator(src="en", dest="ru")
         print(translator.translate(" ".join(voice.split()[1:])))
         speak(translator.translate(" ".join(voice.split()[1:])))
 
@@ -322,10 +323,10 @@ def execute_cmd(cmd, voice, countries, cities, days):
             speak("Решка")
             print("Решка")
 
-    elif cmd == "print":
-        pg.write(" ".join(voice.split()[2:]), interval="0.01")
-    elif cmd == "close":
-        pg.hotkey("alt", "f4")
+    # elif cmd == "print":
+    #     pg.write(" ".join(voice.split()[2:]), interval="0.01")
+    # elif cmd == "close":
+    #     pg.hotkey("alt", "f4")
 
     elif cmd == "sound":
         try:
@@ -410,10 +411,10 @@ def execute_cmd(cmd, voice, countries, cities, days):
                 speak("".join(list(texts)[:dot_index]))
         except UnboundLocalError:
             pass
-    else:
-        webbrowser.open_new_tab(
-            "https://www.google.com/search?q={}".format("+".join(voice.split()[1:]))
-        )
+    # else:
+    #     webbrowser.open_new_tab(
+    #         "https://www.google.com/search?q={}".format("+".join(voice.split()[1:]))
+    #     )
 
 
 stop_listening = r.listen_in_background(m, callback)
